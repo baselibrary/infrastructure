@@ -1,0 +1,48 @@
+---
+- name: start vault server container
+  docker_container:
+    name: "{{ vault_name }}"
+    image: "{{ vault_image }}:{{ vault_version }}"
+    ports:
+      - "{{ vault_port }}:8200"
+    volumes:
+      - "{{ vault_data_dir }}/conf:/vault/config"
+      - "{{ vault_data_dir }}/logs:/vault/logs"
+      - "{{ vault_data_dir }}/file:/vault/file"
+    capabilities:
+      - "IPC_LOCK"
+    env:
+      VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}},"listener": {"tcp":{"address": "0.0.0.0:8200","tls_disable":1}},"default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
+    command: "vault server -config=/vault/config"
+    restart_policy: unless-stopped
+  become: yes
+
+- name: wait for the vault server to start
+  wait_for:
+    port: "{{ vault_port }}"
+    delay: 10
+
+- stat:
+    path: "{{ vault_data_dir }}/keys"
+  register: vault_keys
+  become: yes
+
+- name: vault init
+  shell: "docker exec {{ vault_name }} vault init -address=http://127.0.0.1:8200 > {{ vault_data_dir }}/keys"
+  when: vault_keys.stat.exists == false
+  become: yes
+
+- name: vault unseal
+  shell: "docker exec {{ vault_name }} vault unseal -address=http://127.0.0.1:8200 $(grep 'Key {{ item }}:' {{ vault_data_dir }}/keys | awk '{print $NF}')"
+  with_items: [1, 2, 3]
+  when: vault_keys.stat.exists == false
+  become: yes
+
+- name: vault root token
+  shell: "grep 'Initial Root Token:' {{ vault_data_dir }}/keys | awk '{print $NF}'"
+  register: vault_token
+  become: yes
+
+- name: generate apikey configuration
+  template:  src=files/vault.j2 dest="{{ inventory_dir }}/group_vars/all/vault.yml"
+  delegate_to: localhost

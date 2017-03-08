@@ -1,0 +1,212 @@
+---
+# image
+nexus_name: nexus-server
+nexus_image: sonatype/nexus3
+nexus_version: 3.2.1
+
+# network
+nexus_port: 8081
+nexus_domain: repo.thoughtworks.ga
+# data
+nexus_data_dir: "/var/lib/nexus"
+
+# security
+nexus_admin_user: admin
+nexus_admin_pass: admin123
+
+nexus_privileges:
+  - name: all-repos-read # used as key to update a privilege
+    description: 'Read & Browse access to all repos'
+    type: application
+    repository: '*'
+    actions:
+      - read
+      - browse
+
+nexus_roles:
+  - id: Developpers # can map to a LDAP group id, also used as a key to update a role
+    name: nx-developer
+    description: Developer Role
+    privileges:
+      - nx-search-read
+      - all-repos-read
+    roles: []
+
+nexus_local_users: []
+# example user item :
+#  - username: jenkins # used as key to update
+#    first_name: Jenkins
+#    last_name: CI
+#    email: support@company.com
+#    password: "s3cr3t"
+#    roles:
+#      - developers
+
+# nexus dns
+nexus_dns: dnspod
+
+# branding
+nexus_branding_header: ""
+nexus_branding_footer: "Last provisionned {{ ansible_date_time.iso8601 }}"
+
+# repos
+nexus_repositories:
+  - name: maven-releases
+    type: maven2
+    recipe: hosted
+    write_policy: allow_once
+    version_policy: release
+  - name: maven-snapshot
+    type: maven2
+    recipe: hosted
+    write_policy: allow
+    version_policy: snapshot
+  - name: maven-central
+    type: maven2
+    recipe: proxy
+    remote_url: 'https://jcenter.bintray.com/'
+  - name: maven-public
+    type: maven2
+    recipe: group
+    members:
+      - maven-releases
+      - maven-snapshot
+      - maven-central
+  - name: docker-releases
+    type: docker
+    recipe: hosted
+    http_port: 5001
+    write_policy: allow_once
+    version_policy: release
+  - name: docker-snapshot
+    type: docker
+    recipe: hosted
+    http_port: 5002
+    write_policy: allow
+    version_policy: snapshot
+  - name: docker-central
+    type: docker
+    recipe: proxy
+    remote_url: 'https://registry-1.docker.io/'
+    index_type: registry
+  - name: docker-public
+    type: docker
+    recipe: group
+    http_port: 5000
+    members:
+      - docker-releases
+      - docker-snapshot
+      - docker-central
+  - name: npm-releases
+    type: npm
+    recipe: hosted
+    write_policy: allow_once
+    version_policy: release
+  - name: npm-snapshot
+    type: npm
+    recipe: hosted
+    write_policy: allow
+    version_policy: snapshot
+  - name: npm-central
+    type: npm
+    recipe: proxy
+    remote_url: 'https://registry.npm.taobao.org/'
+  - name: npm-public
+    type: npm
+    recipe: group
+    members:
+      - npm-releases
+      - npm-snapshot
+      - npm-central
+  - name: bower-releases
+    type: bower
+    recipe: hosted
+    write_policy: allow_once
+    version_policy: release
+  - name: bower-snapshot
+    type: bower
+    recipe: hosted
+    write_policy: allow
+    version_policy: snapshot
+  - name: bower-central
+    type: bower
+    recipe: proxy
+    remote_url: 'http://bower.herokuapp.com/'
+  - name: bower-public
+    type: bower
+    recipe: group
+    members:
+      - bower-releases
+      - bower-snapshot
+      - bower-central
+  - name: nuget-releases
+    type: nuget
+    recipe: hosted
+    write_policy: allow_once
+    version_policy: release
+  - name: nuget-snapshot
+    type: nuget
+    recipe: hosted
+    write_policy: allow
+    version_policy: snapshot
+  - name: nuget-central
+    type: nuget
+    recipe: proxy
+    remote_url: 'https://www.nuget.org/api/v2/'
+  - name: nuget-public
+    type: nuget
+    recipe: group
+    members:
+      - nuget-releases
+      - nuget-snapshot
+      - nuget-central
+  - name: pypi-releases
+    type: pypi
+    recipe: hosted
+    write_policy: allow_once
+    version_policy: release
+  - name: pypi-snapshot
+    type: pypi
+    recipe: hosted
+    write_policy: allow
+    version_policy: snapshot
+  - name: pypi-central
+    type: pypi
+    recipe: proxy
+    remote_url: 'http://mirrors.aliyun.com/pypi/'
+  - name: pypi-public
+    type: pypi
+    recipe: group
+    members:
+      - pypi-releases
+      - pypi-snapshot
+      - pypi-central
+  - name: rubygems-releases
+    type: rubygems
+    recipe: hosted
+    write_policy: allow_once
+    version_policy: release
+  - name: rubygems-snapshot
+    type: rubygems
+    recipe: hosted
+    write_policy: allow
+    version_policy: snapshot
+  - name: rubygems-central
+    type: rubygems
+    recipe: proxy
+    remote_url: 'http://mirrors.aliyun.com/rubygems/'
+  - name: rubygems-public
+    type: rubygems
+    recipe: group
+    members:
+      - rubygems-releases
+      - rubygems-snapshot
+      - rubygems-central
+
+
+nexus_repository_defaults:
+  blob_store: default                 # Note : cannot be updated once the repo has been created
+  strict_content_validation: true
+  version_policy: release             # release, snapshot or mixed
+  write_policy: allow_once            # allow_once or allow
+  layout_policy: strict               # strict or permissive

@@ -1,0 +1,16 @@
+---
+- name: start ldap server container
+  docker_container:
+    name: "{{ ldap_name }}"
+    image: "{{ ldap_image }}:{{ ldap_version }}"
+    ports:
+      - "389:389"
+      - "636:389"
+    volumes:
+      - "{{ ldap_data_dir }}:/var/lib/ldap"
+    env:
+      LDAP_ORGANISATION: "thoughtworks"
+      LDAP_DOMAIN: "thoughtworks.ga"
+      LDAP_ADMIN_PASSWORD: "12345678"
+    restart_policy: always
+  become: yes

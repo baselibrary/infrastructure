@@ -1,0 +1,7 @@
+ANXS.apt
+ANXS.ntp
+ANXS.hostname
+ANXS.timezone
+ANXS.openssh
+ANXS.cron
+ANXS.utilities

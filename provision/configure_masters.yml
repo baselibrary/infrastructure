@@ -1,0 +1,8 @@
+---
+- hosts: masters
+  gather_facts: yes
+  vars:
+    mysql_data_dir: /data/lib/mysql
+  roles:
+    - mysql
+    - rancher

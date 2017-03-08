@@ -1,0 +1,77 @@
+---
+- hosts: all
+  become: true
+  gather_facts: yes
+  pre_tasks:
+    - name: setting host facts
+      set_fact:
+        public_ipv4:  "{{ ansible_eth0.ipv4.address }}"
+        private_ipv4: "{{ ansible_eth0.ipv4.address }}"
+  vars:
+    additional_disks:
+      - disk: /dev/sdb
+        fstype: ext4
+        mount_options: defaults
+        mount: /data
+    docker_opts: "--registry-mirror=http://toc-repo01:5000 --insecure-registry=toc-repo01:5000 "
+    docker_certs:
+      - host: "reg.dev.twleansw.com"
+        cert: "reg.dev.twleansw.com.crt"
+    docker_registries:
+      - host: "https://index.docker.io/v1/"
+        auth: "Zmx5MndpbmQ6cHdjNTAycg=="
+        email: "fly2wind@gmail.com"
+      - host: "http://toc-repo01:5000/"
+        auth: "Zmx5MndpbmQ6cHdjNTAycg=="
+        email: "fly2wind@gmail.com"
+      - host: "reg.dev.twleansw.com"
+        auth: "YWRtaW46TGVhbnN3ZGV2MQ=="
+        email: "admin@admin.com"
+    docker_additonal_directory: /data/lib/docker
+  roles:
+    - common
+    - docker
+
+- hosts: common
+  become: true
+  gather_facts: no
+  vars:
+    ldap_data_dir:  "/data/lib/ldap"
+    vault_data_dir: "/data/lib/vault"
+  roles:
+    - vault
+    - ldap
+
+- hosts: repository
+  become: true
+  gather_facts: no
+  vars:
+    nexus_port: 80
+    nexus_data_dir: "/data/lib/nexus"
+    nexus_local_users:
+      - username: fly2wind
+        first_name: Docker
+        last_name: User
+        email: fly2wind@gmail.com
+        password: pwc502r
+        roles:
+          - nx-admin
+  roles:
+    - nexus
+
+
+- hosts: masters
+  become: true
+  gather_facts: no
+  vars:
+    rancher_data_dir: /data/lib/mysql
+  roles:
+    - rancher
+
+- hosts: slaves
+  become: true
+  gather_facts: no
+  vars:
+    rancher_server_url: "http://10.202.128.211:8080"
+  roles:
+    - rancher-agent

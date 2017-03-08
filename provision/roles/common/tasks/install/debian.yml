@@ -1,0 +1,11 @@
+---
+- name: install common package
+  apt:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  with_items:
+    - ntp
+    - ntpdate
+    - ca-certificates
+    - apt-transport-https

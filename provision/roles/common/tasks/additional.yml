@@ -1,0 +1,51 @@
+---
+- name: partition additional disks
+  shell: |
+    if
+        [ -b {{ item.disk }} ]
+    then
+        [ -b {{ item.disk }}1 ] || parted --script "{{ item.disk }}" mklabel gpt mkpart primary 1MiB 100%
+    fi
+  args:
+    creates: "{{ item.disk }}1"
+    executable: "/bin/bash"
+  with_items: "{{ additional_disks }}"
+  become: yes
+
+- name: create filesystem on the first partition
+  filesystem:
+    dev: "{{ item.disk }}1"
+    force: "{{ item.force|d(omit) }}"
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.fsopts|d(omit) }}"
+  with_items: "{{ additional_disks }}"
+  become: yes
+
+- name: ensure the mount directory exists
+  file:
+    path: "{{ item.mount }}"
+    owner: "{{ disk_user | default('root') }}"
+    group: "{{ disk_group | default('root') }}"
+    state: directory
+  with_items: "{{ additional_disks }}"
+  become: yes
+
+- name: "get uuid for partition"
+  command: blkid -s UUID -o value "{{ item.disk }}1"
+  register: uuid_disks
+  with_items: "{{ additional_disks }}"
+  changed_when: False
+  become: yes
+
+- name: mount additional disk
+  mount:
+    name: "{{ item.0.mount }}"
+    fstype: "{{ item.0.fstype }}"
+    opts: "{{ item.0.mount_options|d(omit) }}"
+    passno: "0"
+    src: "UUID={{ item.1.stdout }}"
+    state: "{{ item.0.mount_state|d('mounted') }}"
+  with_together:
+    - "{{ additional_disks }}"
+    - "{{ uuid_disks.results }}"
+  become: yes

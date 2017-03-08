@@ -1,0 +1,7 @@
+---
+- name: update nexus domain to dnspod
+  dnspod:
+    sub_domain: "repo"
+    base_domain: "thoughtworks.ga"
+    record_type: A
+    value: "{{ private_ipv4 }}"

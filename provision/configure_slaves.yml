@@ -1,0 +1,11 @@
+---
+# ansible-playbook -e "RANCHER_PROJECT_NAME=infrastructure" -i provision/scaleworks provision/configure_slaves.yml
+- hosts: masters
+  gather_facts: yes
+  roles:
+    - rancher-project
+
+- hosts: "{{ RANCHER_PROJECT_NAME }}"
+  gather_facts: yes
+  roles:
+    - rancher-agent

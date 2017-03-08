@@ -1,0 +1,17 @@
+---
+- name: add epel repository
+  yum_repository:
+    name: epel
+    description: "EPEL YUM repo"
+    baseurl: "http://download.fedoraproject.org/pub/epel/$releasever/$basearch/"
+    gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-$releasever
+    enabled: yes
+  become: yes
+
+- name: install common package
+  yum:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  with_items:
+    - python-pip

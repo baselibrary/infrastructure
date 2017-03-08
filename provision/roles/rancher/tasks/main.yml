@@ -1,0 +1,65 @@
+---
+- name: start rancher server container
+  docker_container:
+    name: "{{ rancher_name }}"
+    image: "rancher/server:{{ rancher_version }}"
+    ports:
+      - "{{ rancher_port }}:8080"
+    command: "--db-host {{ mysql_host }} --db-port {{ mysql_port }} --db-user {{ mysql_user }} --db-pass {{ mysql_password }} --db-name {{ mysql_database }}"
+    restart_policy: unless-stopped
+  become: yes
+
+- name: wait for the rancher server to start
+  wait_for:
+    port: "{{ rancher_port }}"
+    delay: 20
+
+- name: verify if global apikey exists
+  stat:
+    path: "{{ inventory_dir }}/group_vars/all/apikey.yml"
+  register: apikey_file
+  delegate_to: localhost
+
+- debug: msg="{{ RANCHER_MASTER_URL }}"
+
+- name: add apikey
+  uri:
+    method: POST
+    url: "http://127.0.0.1:8080/v1/apikeys"
+    body: ' {"type":"apikey","accountId":"1a1","name":"ansible","description":null,"created":null,"kind":null,"removeTime":null,"removed":null,"uuid":null}'
+    body_format: json
+    status_code: 201
+  register: apikey_resp
+  when: apikey_file.stat.exists == false
+
+- set_fact:
+    RANCHER_API_KEY_ACCOUNT_TOKEN:  "{{ apikey_resp.json['publicValue'] }}"
+    RANCHER_API_KEY_ACCOUNT_SECRET: "{{ apikey_resp.json['secretValue'] }}"
+  when: apikey_file.stat.exists == false
+
+- name: generate apikey configuration
+  template:  src=files/apikey.j2 dest="{{ inventory_dir }}/group_vars/all/apikey.yml"
+  delegate_to: localhost
+  when: apikey_file.stat.exists == false
+
+- name: enable ldap authentication
+  uri:
+    method: POST
+    url: "http://127.0.0.1:8080/v1/openldapconfigs"
+    user: "{{ RANCHER_API_KEY_ACCOUNT_TOKEN }}"
+    password: "{{ RANCHER_API_KEY_ACCOUNT_SECRET }}"
+    body: "{{ rancher_ldap_auth_body | to_json }}"
+    body_format: json
+    status_code: 201
+  when: apikey_file.stat.exists == false
+
+- name: enable ldap admin user
+  uri:
+    method: PUT
+    url: "http://127.0.0.1:8080/v1/accounts/1a1"
+    user: "{{ RANCHER_API_KEY_ACCOUNT_TOKEN }}"
+    password: "{{ RANCHER_API_KEY_ACCOUNT_SECRET }}"
+    body: "{{ rancher_ldap_admin_body | to_json }}"
+    body_format: json
+    status_code: 200
+  when: apikey_file.stat.exists == false

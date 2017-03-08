@@ -1,0 +1,9 @@
+---
+#- name: install common package
+#  zypper:
+#    name: "{{ item }}"
+#    state: present
+#  become: yes
+#  with_items:
+#    - ntp
+#    - python-pip

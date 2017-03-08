@@ -1,0 +1,16 @@
+/.bundle
+.vscode
+.vagrant
+.DS_Store
+/db/*.sqlite3
+/log/*.log
+/tmp
+/public/system
+.vagrant
+.sass-cache
+.idea/*
+tags
+coverage
+/db/schema.rb
+/db/projects
+/db/gab.yaml

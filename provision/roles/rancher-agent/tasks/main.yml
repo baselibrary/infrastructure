@@ -1,0 +1,32 @@
+---
+- include_vars: "{{ inventory_dir }}/group_vars/{{ RANCHER_PROJECT_NAME }}"
+
+- name: Get the default project id
+  uri:
+    method: POST
+    url: "http://{{ RANCHER_MASTER_URL }}:{{ RANCHER_MASTER_PORT }}/v1/registrationtokens?projectId={{ RANCHER_PROJECT_ID }}"
+    return_content: yes
+    user: "{{ RANCHER_API_KEY_ACCOUNT_TOKEN }}"
+    password: "{{ RANCHER_API_KEY_ACCOUNT_SECRET }}"
+    status_code: 201
+  register: rancher_token_url
+
+- name: Return the registration URL of Rancher server
+  uri:
+    method: GET
+    url: "{{ rancher_token_url.json['links']['self'] }}"
+    user: "{{ RANCHER_API_KEY_ACCOUNT_TOKEN }}"
+    password: "{{ RANCHER_API_KEY_ACCOUNT_SECRET }}"
+  register: rancher_token
+
+- name: Register the Host machine with the Rancher server
+  docker:
+    image: rancher/agent:v1.2.1
+    privileged: yes
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/lib/rancher:/var/lib/rancher
+    env:
+      CATTLE_HOST_LABELS="project={{RANCHER_PROJECT_NAME}}"
+    command: "http://{{ RANCHER_MASTER_URL }}:{{ RANCHER_MASTER_PORT }}/v1/scripts/{{ rancher_token.json['token'] }}"
+  become: yes

@@ -1,0 +1,35 @@
+---
+# rpm install
+docker_rpmpackage: no
+
+# daemon options
+docker_opts: --registry-mirror=http://fly2wind.m.alauda.cn
+
+#
+# certs
+#
+# A list of certs. e.g.
+# docker_certs:
+#   - "ca.crt"
+docker_certs: []
+#
+# registry
+#
+# A list of registries. e.g.
+# docker_registries:
+#   - host: docker.chatid.com
+#     auth: path/to/ca.crt
+docker_registries: []
+
+#  additonal directory
+# docker_additonal_directory:
+
+# You can set any interface, that is listened by docker engine.
+docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
+docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
+docker_swarm_port: 2377
+
+# Switches disabling the docker-engine, docker group and swarm-mode setup.
+skip_engine: false 
+skip_swarm: false
+skip_docker_py: false

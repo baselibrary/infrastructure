@@ -1,0 +1,31 @@
+---
+# ansible-playbook -i provision/scaleworks provision/configure_host.yml
+- hosts: all
+  become: true
+  gather_facts: yes
+  pre_tasks:
+    - name: setting host facts
+      set_fact:
+        public_ipv4:  "{{ ansible_eth0.ipv4.address }}"
+        private_ipv4: "{{ ansible_eth0.ipv4.address }}"
+  vars:
+    additional_disks:
+      - disk: /dev/sdb
+        fstype: ext4
+        mount_options: defaults
+        mount: /data
+    docker_opts: "--registry-mirror=http://toc-repo01:5000 --insecure-registry=toc-repo01:5000 "
+    docker_registries:
+      - host: "https://index.docker.io/v1/"
+        auth: "Zmx5MndpbmQ6cHdjNTAycg=="
+        email: "fly2wind@gmail.com"
+      - host: "http://toc-repo01:5000/"
+        auth: "Zmx5MndpbmQ6cHdjNTAycg=="
+        email: "fly2wind@gmail.com"
+      - host: "reg.dev.twleansw.com"
+        auth: "YWRtaW46TGVhbnN3ZGV2MQ=="
+        email: "admin@admin.com"
+    docker_additonal_directory: /data/lib/docker
+  roles:
+    - common
+    - docker

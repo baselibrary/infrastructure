@@ -1,0 +1,28 @@
+---
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version|lower|replace('/', '_') }}.yml"
+    - "{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
+    - "{{ ansible_distribution|lower }}-{{ ansible_distribution_major_version|lower|replace('/', '_') }}.yml"
+    - "{{ ansible_distribution|lower }}.yml"
+    - "{{ ansible_os_family|lower }}.yml"
+    - main.yml
+
+- include: additional.yml
+  tags:
+    - development
+    - common
+    - additional
+
+- include: install.yml
+  tags:
+    - development
+    - common
+    - install
+
+- include: config.yml
+  tags:
+    - development
+    - common
+    - config

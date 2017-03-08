@@ -1,0 +1,5 @@
+mysql_host: "{{ hostvars[groups['masters'][0]]['ansible_eth0']['ipv4']['address'] }}"
+mysql_port: 3306
+mysql_user: rancher
+mysql_password: fsBLqWQFk7yJ
+mysql_database: rancher

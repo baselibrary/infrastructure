@@ -1,0 +1,24 @@
+RANCHER_MASTER_URL: "{{ hostvars[groups['masters'][0]]['ansible_eth0']['ipv4']['address'] }}"
+RANCHER_MASTER_PORT: 8080
+
+# ansible groups for service configuration
+auth_ldap: no
+auth_ldap_uri: "ldaps://10.29.1.1"
+auth_ldap_base_dn: ""
+auth_ldap_bind_dn: ""
+auth_ldap_bind_password: ""
+auth_ldap_user_search: ""
+auth_ldap_group_search: ""
+
+auth_local: yes
+auth_local_admin_fullname: admin
+auth_local_admin_username: admin
+auth_local_admin_password: admin
+
+auth_github: no
+auth_github_client_id: admin
+auth_github_client_secret: admin
+
+# dns
+host_dns: true
+host_dns_domain: thoughtworks.local

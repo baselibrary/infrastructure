@@ -1,0 +1,18 @@
+---
+- name: ensure docker directory
+  file:
+    path: "{{ docker_additonal_directory }}"
+    owner: root
+    group: root
+    mode: 0644
+    state: directory
+  when: docker_additonal_directory is defined
+  become: yes
+
+- name: link docker directory to additional disks
+  file:
+    src:  "{{ docker_additonal_directory }}"
+    dest: /var/lib/docker
+    state: link
+  when: docker_additonal_directory is defined
+  become: yes

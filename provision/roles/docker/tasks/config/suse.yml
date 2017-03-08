@@ -1,0 +1,10 @@
+- name: configure docker package
+  template:
+    src: suse/sysconfig/docker.j2
+    dest: /etc/sysconfig/docker
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart docker
+  become: yes

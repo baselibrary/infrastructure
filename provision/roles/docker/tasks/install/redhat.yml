@@ -1,0 +1,21 @@
+---
+- name: add docker yum repository
+  yum_repository:
+    name: "docker"
+    description: "Docker Repository"
+    baseurl: "https://yum.dockerproject.org/repo/main/centos/$releasever/"
+    gpgkey: "https://yum.dockerproject.org/gpg"
+    enabled: yes
+  become: yes
+
+- name: install docker package
+  yum:
+    name: "{{ docker_package_name }}-{{ docker_package_version }}"
+    state: present
+  become: yes
+
+- name: install docker client
+  pip:
+    name: "docker-py==1.9.0"
+    state: present
+  become: yes

@@ -1,0 +1,30 @@
+---
+- name: create docker config directory
+  file:
+    path:  "/etc/systemd/system/docker.service.d"
+    owner: root
+    group: root
+    mode:  0755
+    state: directory
+  become: yes
+
+- name: configure docker config file
+  template:
+    src:  redhat/sysconfig/docker.j2
+    dest: /etc/sysconfig/docker
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+  notify:
+    - restart docker
+
+- name: configure docker service
+  template:
+    src:   redhat/systemd/docker.conf.j2
+    dest:  /etc/systemd/system/docker.service.d/docker.conf
+    owner: root
+    group: root
+    mode:  0644
+  notify:
+    - restart docker

@@ -1,0 +1,3 @@
+---
+- name: "install docker-engine in {{ ansible_distribution|lower }} system"
+  include: "install/{{ ansible_os_family|lower }}.yml"

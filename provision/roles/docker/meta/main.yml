@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  author: "Shawn Ma"
+  company: ThoughtWorks, Inc.
+  license: BSD
+  min_ansible_version: 2.0
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+  categories:
+    - docker
+dependencies: []

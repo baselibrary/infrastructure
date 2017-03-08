@@ -1,0 +1,13 @@
+---
+- name: config nexus repositories
+  uri:
+    url: "http://localhost:{{ nexus_port }}/service/siesta/rest/v1/script/repositories/run"
+    method: POST
+    user: "{{ nexus_admin_user }}"
+    password: "{{ nexus_admin_pass }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "text/plain"
+    body: "{{ ( nexus_repository_defaults|combine(item) ) | to_json }}"
+    status_code: 200,204
+  with_items: "{{ nexus_repositories }}"

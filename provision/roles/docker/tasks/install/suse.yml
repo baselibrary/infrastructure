@@ -1,0 +1,71 @@
+---
+- block:
+  - name: add docker apt key
+    rpm_key:
+      key: http://download.opensuse.org/repositories/Virtualization:/containers/openSUSE_Leap_42.1/repodata/repomd.xml.key
+      state: present
+    become: yes
+
+  - name: add docker apt repository
+    zypper_repository:
+      name: Virtualization:containers.repo
+      repo: http://download.opensuse.org/repositories/Virtualization:/containers/openSUSE_Leap_42.1/
+      state: present
+    become: yes
+
+  - name: install docker dependencies
+    zypper:
+      name: "{{ item }}"
+      state: present
+    become: yes
+    with_items: "{{ docker_required_packages }}"
+
+  - name: install docker package
+    zypper:
+      name: "{{ docker_package_name }}={{ docker_package_version }}"
+      oldpackage: yes
+      state: present
+    become: yes
+
+  - name: install pip
+    easy_install:
+      name: pip
+      state: latest
+    become: yes
+
+  - name: install docker client
+    pip:
+      name: docker-py
+      state: present
+    become: yes
+  when: not docker_rpmpackage
+
+- block:
+  - name: prepare docker packages
+    copy:
+      src: "{{ ansible_os_family|lower }}/{{ item }}"
+      dest: "/tmp/{{ item }}"
+      owner: root
+      group: root
+      mode: 0755
+      force: no
+    with_items: "{{ docker_rpm_packages }}"
+    become: yes
+
+  - name: install docker dependencies
+    zypper:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ docker_required_packages }}"
+    become: yes
+
+  - name: install docker packages
+    zypper:
+      name: "/tmp/{{ item }}"
+      disable_gpg_check: yes
+      force: yes
+      state: installed
+    with_items: "{{docker_rpm_packages}}"
+    ignore_errors: yes
+    become: yes
+  when: docker_rpmpackage

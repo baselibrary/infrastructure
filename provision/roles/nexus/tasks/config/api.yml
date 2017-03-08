@@ -1,0 +1,12 @@
+---
+- name: call nexus groovy script {{ script_name }}
+  uri:
+    url: "http://localhost:{{ nexus_port }}/service/siesta/rest/v1/script/{{ script_name }}/run"
+    method: POST
+    user: "{{ nexus_admin_user }}"
+    password: "{{ nexus_admin_pass }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "text/plain"
+    body: "{{ args | to_json }}"
+    status_code: 200,204

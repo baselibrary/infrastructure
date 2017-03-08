@@ -1,0 +1,10 @@
+---
+# image
+vault_name: vault-server
+vault_image: vault
+vault_version: 0.6.3
+
+# network
+vault_port: 8200
+
+vault_data_dir: "/var/lib/vault"

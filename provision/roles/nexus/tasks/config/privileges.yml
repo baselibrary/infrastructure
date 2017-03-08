@@ -1,0 +1,13 @@
+---
+- name: config nexus privileges
+  uri:
+    url: "http://localhost:{{ nexus_port }}/service/siesta/rest/v1/script/privileges/run"
+    method: POST
+    user: "{{ nexus_admin_user }}"
+    password: "{{ nexus_admin_pass }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "text/plain"
+    body: "{{ item | to_json }}"
+    status_code: 200,204
+  with_items: "{{ nexus_privileges }}"

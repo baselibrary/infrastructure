@@ -1,0 +1,11 @@
+- name: initialize nexus environment
+  uri:
+    url: "http://localhost:{{ nexus_port }}/service/siesta/rest/v1/script/initialize/run"
+    method: POST
+    user: "{{ nexus_admin_user }}"
+    password: "{{ nexus_admin_pass }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "text/plain"
+    status_code: 200,204
+  when: nexus_data_dir_contents.stdout == ""

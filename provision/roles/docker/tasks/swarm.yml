@@ -1,0 +1,46 @@
+---
+- name: check the docker info
+  shell: docker info
+  changed_when: False
+  register: docker_info
+
+- name: init "swarm mode" on the first swarm manager
+  shell: docker swarm init --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }} --advertise-addr {{ docker_swarm_addr }}
+  when: "docker_info.stdout.find('Swarm: active') == -1 and inventory_hostname == groups['master'][0]"
+
+- name: get the swarm worker join-token
+  shell: docker swarm join-token -q worker
+  changed_when: false
+  register: docker_worker_token
+  delegate_to: "{{ groups['masters'][0] }}"
+  delegate_facts: true
+  when: "'slaves' in group_names"
+
+- name: get the swarm manager join-token
+  shell: docker swarm join-token -q manager
+  changed_when: false
+  register: docker_manager_token
+  delegate_to: "{{ groups['masters'][0] }}"
+  delegate_facts: true
+  when: "'master' in group_names and inventory_hostname != groups['master'][0]"
+
+- name: declare the address of the first swarm manager
+  set_fact:
+    docker_swarm_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+  when: "inventory_hostname == groups['master'][0]"
+
+- name: distribute the fact containing address of the first swarm manager
+  set_fact:
+    docker_swarm_manager_address: "{{hostvars[groups['master'][0]]['docker_swarm_manager_address'] }}"
+  when: "inventory_hostname != groups['master'][0]"
+
+
+- name: join the pending swarm worker nodes
+  shell: docker swarm join --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }} --advertise-addr {{ docker_swarm_addr }} --token "{{ docker_worker_token.stdout }}" {{ docker_swarm_manager_address }}
+  changed_when: false
+  when: "docker_info.stdout.find('Swarm: active') == -1 and docker_info.stdout.find('Swarm: pending') == -1 and 'slaves' in group_names"
+
+- name: join the pending swarm manager nodes
+  shell: docker swarm join --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }} --advertise-addr {{ docker_swarm_addr }} --token "{{ docker_manager_token.stdout }}" {{ docker_swarm_manager_address }}
+  changed_when: false
+  when: "docker_info.stdout.find('Swarm: active') == -1 and docker_info.stdout.find('Swarm: pending') == -1 and 'master' in group_names and inventory_hostname != groups['master'][0]"

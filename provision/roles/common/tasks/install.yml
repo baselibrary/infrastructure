@@ -1,0 +1,7 @@
+---
+- name: "install common package in {{ ansible_distribution|lower }} system"
+  include: "install/{{ ansible_os_family|lower }}.yml"
+  tags:
+    - development
+    - common
+    - install

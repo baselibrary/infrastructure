@@ -1,0 +1,39 @@
+---
+- name: add docker apt key
+  apt_key:
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+    keyserver: keyserver.ubuntu.com
+    state: present
+  become: yes
+
+- name: add docker apt repository
+  apt_repository:
+    repo: 'deb https://apt.dockerproject.org/repo {{ansible_distribution|lower}}-{{ ansible_distribution_release }} main'
+    update_cache: yes
+    state: present
+  become: yes
+
+- name: install docker dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  with_items: "{{ docker_required_packages }}"
+
+- name: install docker package
+  apt:
+    name: "{{ docker_package_name }}={{ docker_package_version }}"
+    state: present
+  become: yes
+
+- name: install pip
+  easy_install:
+    name: pip
+    state: latest
+  become: yes
+
+- name: install docker client
+  pip:
+    name: "docker-py==1.9.0"
+    state: present
+  become: yes

@@ -1,0 +1,11 @@
+{
+  "auths": {
+{% for info in docker_registries %}
+    "{{ info.host }}": {
+      "auth": "{{ info.auth }}",
+      "email": "{{ info.email }}"
+    }{% if not loop.last -%},{%- endif %}
+    
+{% endfor %}
+  }
+}

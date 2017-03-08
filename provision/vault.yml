@@ -1,0 +1,11 @@
+---
+- hosts: all
+  vars_prompt:
+    - name: "my_password2"
+      prompt: "Enter password2"
+      private: yes
+      encrypt: "sha512_crypt"
+      confirm: yes
+      salt_size: 7
+  tasks:
+    - debug: msg="{{ my_password2 }}"

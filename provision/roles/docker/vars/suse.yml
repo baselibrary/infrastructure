@@ -1,0 +1,20 @@
+# docker-engine is the default package name
+docker_package_name: docker
+docker_package_version: "1.12.3-158.1"
+
+# required
+docker_required_packages:
+  - libapparmor1
+  - bridge-utils
+  - python-setuptools
+
+# rpm package
+docker_rpm_packages:
+  - docker-1.12.3-158.1.x86_64.rpm
+  - containerd-0.2.4+git0366d7e-28.1.x86_64.rpm
+  - runc-0.1.1+git02f8fa7-21.1.x86_64.rpm
+  - python-backports.ssl_match_hostname-3.5.0.1-1.1.noarch.rpm
+  - python-websocket-client-0.32.0-3.1.noarch.rpm
+  - python-ipaddress-1.0.16-2.1.noarch.rpm
+  - python-requests-2.9.1-1.1.noarch.rpm
+  - python-docker-py-1.10.4-7.1.noarch.rpm

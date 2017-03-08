@@ -1,0 +1,8 @@
+---
+# ansible-playbook -i provision/scaleworks provision/configure_common.yml
+- hosts: common
+  gather_facts: yes
+  vars:
+    vault_data_dir: "/data/lib/vault"
+  roles:
+    - vault

@@ -1,0 +1,10 @@
+---
+# image
+ldap_name: ldap-server
+ldap_image: osixia/openldap
+ldap_version: 1.1.7
+
+# network
+ldap_port: 389
+
+ldap_data_dir: "/var/lib/ldap"

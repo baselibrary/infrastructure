@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: true
+  gather_facts: yes
+  pre_tasks:
+    - name: setting host facts
+      set_fact:
+        public_ipv4:  "{{ ansible_eth1.ipv4.address }}"
+        private_ipv4: "{{ ansible_eth1.ipv4.address }}"
+  roles:
+    - common
+    - docker
+
+- hosts: repository
+  become: true
+  gather_facts: no
+  roles:
+    - nexus
+
+- hosts: master
+  become: true
+  gather_facts: no
+  roles:
+    - rancher
+
+- hosts: slaves
+  become: true
+  gather_facts: no
+  roles:
+    - rancher-agent

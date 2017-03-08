@@ -1,0 +1,43 @@
+---
+- name: "config docker in {{ ansible_distribution|lower }} system"
+  include: "config/{{ ansible_os_family|lower }}.yml"
+
+- name: ensuers docker certs dir exists
+  file:
+    path=/etc/docker/certs.d
+    state=directory
+  become: yes
+  when: docker_certs is defined
+
+#- name: ensuers docker certs host dir exists
+#  file:
+#    path="/etc/docker/certs.d/{{ item.host }}"
+#    state=directory
+#  with_items: "{{ docker_certs }}"
+#  become: yes
+#  when: docker_certs is defined
+
+#- name:
+#  copy:
+#    src="{{ item.cert }}"
+#    dest="/etc/docker/certs.d/{{ item.host }}/ca.crt"
+#  with_items: "{{ docker_certs }}"
+#  become: yes
+#  when: docker_certs is defined
+
+- name: ensuers docker config dir exists
+  file:
+    path=/root/.docker
+    state=directory
+  become: yes
+  when: docker_registries is defined
+
+- name: config docker login
+  template:
+    src=config.json.j2
+    dest=/root/.docker/config.json
+    owner=root
+    group=root
+    mode=0644
+  become: yes
+  when: docker_registries is defined
