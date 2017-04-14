@@ -1,8 +1,18 @@
 ---
-- hosts: masters
+# ansible-playbook -i provision/scaleworks provision/configure_masters.yml
+- hosts: common
+  become: false
   gather_facts: yes
   vars:
     mysql_data_dir: /data/lib/mysql
   roles:
-    - mysql
+    - rancher-mysql
+    - rancher-nginx
+
+- hosts: masters
+  become: true
+  gather_facts: yes
+  vars_files:
+     - 'vars.yml'
+  roles:
     - rancher

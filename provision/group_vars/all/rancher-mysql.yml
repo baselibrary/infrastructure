@@ -1,5 +1,5 @@
-mysql_host: "{{ hostvars[groups['masters'][0]]['ansible_eth0']['ipv4']['address'] }}"
+mysql_host: "{{ hostvars[groups['common'][0]]['ansible_host'] }}"
 mysql_port: 3306
-mysql_user: rancher
+mysql_user: cattle
 mysql_password: fsBLqWQFk7yJ
-mysql_database: rancher
+mysql_database: cattle

@@ -1,0 +1,55 @@
+---
+- name: wait for the rancher server to start
+  uri:
+    url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1"
+    status_code: 200,401
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  register: rancher_auth
+  until: rancher_auth.status == 200 or rancher_auth.status == 401
+  retries: 5
+  delay: 30
+
+- name: add apikey
+  uri:
+    method: POST
+    url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/apikeys"
+    body: "{{ lookup('template', 'apikey.json.j2') }}"
+    body_format: json
+    status_code: 201
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  when: rancher_auth.status == 200
+  delay: 10
+
+- name: enable ldap authentication
+  uri:
+    method: POST
+    url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/openldapconfigs"
+    user:     "{{ RANCHER_APIKEY_PUBLIC }}"
+    password: "{{ RANCHER_APIKEY_SECRET }}"
+    body: "{{ lookup('template', 'openldap.json.j2') }}"
+    body_format: json
+    status_code: 201
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  when: rancher_auth.status == 200
+  delay: 10
+
+- name: create admin user
+  uri:
+    method: PUT
+    url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/accounts/1a1"
+    user:     "{{ RANCHER_APIKEY_PUBLIC }}"
+    password: "{{ RANCHER_APIKEY_SECRET }}"
+    body: "{{ lookup('template', 'user.json.j2') }}"
+    body_format: json
+    status_code: 200
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  when: rancher_auth.status == 200
+  delay: 10

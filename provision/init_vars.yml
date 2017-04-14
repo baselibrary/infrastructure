@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  vars_prompt:
+    - name: "ldap_server"
+      prompt: "LDAP server address"
+      default: "ldap.thoughtworks.io"
+    - name: "ldap_port"
+      prompt: "LDAP server port"
+      default: "389"
+    - name: "ldap_basedn"
+      prompt: "LDAP base dn"
+      default: "OU=Enterprise,OU=Principal,DC=corporate,DC=thoughtworks,DC=com"
+    - name: "ldap_binddn"
+      prompt: "LDAP bind dn"
+      default: "CN=Qiang Shawn Ma,OU=Xian,OU=Employees,OU=Enterprise,OU=Principal,DC=corporate,DC=thoughtworks,DC=com"
+    - name: "ldap_bindpass"
+      prompt: "LDAP bind password"
+      encrypt: "sha512_crypt"
+      confirm: yes
+  tasks:
+    - debug: msg="{{ ldap_bindpass }}"

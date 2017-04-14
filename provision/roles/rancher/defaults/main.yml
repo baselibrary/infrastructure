@@ -1,36 +1,9 @@
 ---
 # image
 rancher_name: rancher-server
-rancher_version: v1.5.0
-
+rancher_image: rancher/server
+rancher_version: v1.5.5
 # network
 rancher_port: 8080
-
+# storage
 rancher_data_dir: "/var/lib/rancher"
-
-rancher_ldap_auth_body:
-  accessMode: "unrestricted"
-  server: "ldap.thoughtworks.io"
-  port: 389
-  tls: false
-  enabled: true
-  serviceAccountUsername: "qsma@corporate.thoughtworks.com"
-  serviceAccountPassword: "ypurpassword"
-  domain: "DC=corporate,DC=thoughtworks,DC=com"
-  userObjectClass: "person"
-  userLoginField: "sAMAccountName"
-  userNameField: "name"
-  userSearchField: "sAMAccountName"
-  userEnabledAttribute: "userAccountControl"
-  userDisabledBitMask: 2
-  groupObjectClass: "group"
-  groupNameField: "name"
-  groupSearchField: "sAMAccountName"
-  groupMemberMappingAttribute: "memberUid"
-  connectionTimeout: 1000
-
-rancher_ldap_admin_body:
-  name: "qsma"
-  kind: "admin"
-  externalId: "CN=Qiang Shawn Ma,OU=Xian,OU=Employees,OU=Enterprise,OU=Principal,DC=corporate,DC=thoughtworks,DC=com"
-  externalIdType: "openldap_user"

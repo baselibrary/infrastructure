@@ -1,0 +1,17 @@
+---
+# ansible-playbook -i provision/scaleworks provision/configure_repos.yml
+- hosts: repository
+  gather_facts: yes
+  vars:
+    nexus_port: 80
+    nexus_data_dir: "/data/lib/nexus"
+    nexus_local_users:
+      - username: fly2wind
+        first_name: Docker
+        last_name: User
+        email: fly2wind@gmail.com
+        password: pwc502r
+        roles:
+          - nx-admin
+  roles:
+    - nexus

@@ -1,0 +1,17 @@
+---
+- name: start rancher server container
+  docker_container:
+    name: "{{ rancher_name }}"
+    image: "{{ rancher_image }}:{{ rancher_version }}"
+    ports:
+      - "8080:8080"
+      - "9345:9345"
+    command: "--db-host {{ mysql_host }} --db-port {{ mysql_port }} --db-user {{ mysql_user }} --db-pass {{ mysql_password }} --db-name {{ mysql_database }} --advertise-address {{ ansible_host }}"
+    restart_policy: unless-stopped
+  become: yes
+
+#- name: wait for the rancher server to start
+#  wait_for:
+#    host: localhost
+#    port: 8080
+#    delay: 30

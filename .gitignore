@@ -9,6 +9,7 @@
 .vagrant
 .sass-cache
 .idea/*
+*.retry
 tags
 coverage
 /db/schema.rb

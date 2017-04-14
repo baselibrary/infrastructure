@@ -1,11 +1,12 @@
-toc-common01   ansible_host=10.202.128.30 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-repo01     ansible_host=10.202.128.31 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-master01   ansible_host=10.202.128.32 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-deliflow01 ansible_host=10.202.128.33 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-deliflow02 ansible_host=10.202.128.34 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-deliflow03 ansible_host=10.202.128.35 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-deliflow04 ansible_host=10.202.128.37 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-
+[all]
+toc-common01   ansible_host=10.202.128.58 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+toc-repo01     ansible_host=10.202.128.59 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+toc-master01   ansible_host=10.202.128.60 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+toc-master02   ansible_host=10.202.128.61 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+toc-infra01    ansible_host=10.202.128.62 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+toc-infra02    ansible_host=10.202.128.63 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+toc-infra03    ansible_host=10.202.128.64 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+toc-infra04    ansible_host=10.202.128.65 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 [common]
 toc-common01
@@ -15,9 +16,10 @@ toc-repo01
 
 [masters]
 toc-master01
+toc-master02
 
-[deliflow]
-toc-deliflow01
-toc-deliflow02
-toc-deliflow03
-toc-deliflow04
+[infra]
+toc-infra01
+toc-infra02
+toc-infra03
+toc-infra04

@@ -10,6 +10,7 @@
 - name: check nexus data directory
   command: "ls {{ nexus_data_dir }}"
   register: nexus_data_dir_contents
+  become: yes
 
 - name: start nexus server container
   docker_container:

@@ -1,0 +1,8 @@
+---
+# ansible-playbook -i provision/scaleworks provision/init_ansible.yml
+- hosts: all
+  become: true
+  gather_facts: no
+  pre_tasks:
+    - name: install python
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)

@@ -1,0 +1,18 @@
+{
+  "accessMode": "unrestricted",
+  "server": "{{ LDAP_HOST }}",
+  "port": {{ LDAP_PORT }},
+  "tls": false,
+  "enabled": true,
+  "serviceAccountUsername": "{{ LDAP_USER }}@{{ LDAP_DOMAIN }}",
+  "serviceAccountPassword": "{{ LDAP_BIND_PASS }}",
+  "domain": "{{ LDAP_BASE_DN }}",
+  "userLoginField": "sAMAccountName",
+  "userObjectClass": "person",
+  "userNameField": "name",
+  "userSearchField": "sAMAccountName",
+  "groupObjectClass": "group",
+  "groupNameField": "name",
+  "groupSearchField": "sAMAccountName",
+  "connectionTimeout": 1000
+}

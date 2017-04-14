@@ -1,3 +1,9 @@
 ---
-# version
-rancher_server_url: "http://localhost:8080"
+# image
+rancher_agent_name: rancher-server
+rancher_agent_image: rancher/agent
+rancher_agent_version: v1.2.2
+# network
+rancher_agent_port: 8080
+# storage
+rancher_agent_data_dir: "/var/lib/rancher"

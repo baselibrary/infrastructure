@@ -1,6 +1,6 @@
 # docker-engine is the default package name
 docker_package_name: docker-engine
-docker_package_version: "1.12.3-0~{{ ansible_distribution_release }}"
+docker_package_version: "1.12.6-0~{{ ansible_distribution|lower}}-{{ ansible_distribution_release }}"
 
 # required
 docker_required_packages:
