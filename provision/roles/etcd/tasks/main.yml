@@ -1,0 +1,23 @@
+---
+- name: start etcd server container
+  docker_container:
+    name: "{{ etcd_name }}"
+    image: "{{ etcd_image }}:{{ etcd_version }}"
+    ports:
+      - "{{ etcd_peer_port }}:{{ etcd_peer_port }}"
+      - "{{ etcd_client_port }}:{{ etcd_client_port }}"
+    volumes:
+      - "{{ etcd_data_dir }}:/var/lib/etcd"
+    env:
+      ETCD_NAME="{{ inventory_hostname }}"
+      ETCD_LISTEN_PEER_URLS="{{ etcd_listen_peer_urls }}"
+      ETCD_LISTEN_CLIENT_URLS="{{ etcd_listen_client_urls }}"
+      ETCD_ADVERTISE_CLIENT_URLS="{{ etcd_advertise_client_urls }}"
+      ETCD_INITIAL_ADVERTISE_PEER_URLS="{{ etcd_initial_advertise_peer_urls }}"
+      ETCD_INITIAL_CLUSTER="{{ etcd_initial_cluster }}"
+      ETCD_INITIAL_CLUSTER_TOKEN="{{ etcd_initial_cluster_token }}"
+      ETCD_INITIAL_CLUSTER_STATE="{{ etcd_initial_cluster_state }}"
+    restart_policy: unless-stopped
+  become: yes
+
+- debug: msg="{{ etcd_initial_cluster }}"

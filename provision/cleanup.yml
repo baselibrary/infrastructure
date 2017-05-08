@@ -1,6 +1,6 @@
 ---
-# ansible-playbook -e "RANCHER_PROJECT_NAME=infrastructure" -i provision/scaleworks provision/cleanup.yml
-- hosts: common
+# ansible-playbook -i provision/scaleworks provision/cleanup.yml
+- hosts: all
   gather_facts: yes
   tasks:
     - name: stop all docker containers
@@ -19,27 +19,15 @@
       shell: docker volume rm $(docker volume ls -qf dangling=true)
       ignore_errors: true
       become: yes
-    - name: remove all volumes
-      shell: rm -rf /data/lib/mysql
-      ignore_errors: true
-      become: yes
-
-- hosts: masters
-  gather_facts: yes
-  tasks:
-    - name: stop all docker containers
-      shell: docker stop $(docker ps -a -q)
-      ignore_errors: true
-      become: yes
-    - name: remove all docker containers
-      shell: docker rm $(docker ps -a -q)
-      ignore_errors: true
-      become: yes
-    - name: remove all docker images
-      shell: docker rmi -f $(docker images -q)
+    - name: stop docker
+      shell: service docker stop
       ignore_errors: true
       become: yes
     - name: remove all volumes
-      shell: docker volume rm $(docker volume ls -qf dangling=true)
+      shell: rm -rf /var/lib/docker && rm -rf /data/lib/*
+      ignore_errors: true
+      become: yes
+    - name: start docker
+      shell: service docker start
       ignore_errors: true
       become: yes

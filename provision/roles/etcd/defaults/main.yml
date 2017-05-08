@@ -1,0 +1,25 @@
+---
+# image
+etcd_name: etcd-server
+etcd_image: quay.io/coreos/etcd
+etcd_version: v3.1.6
+
+etcd_cluster_group: etcd
+
+# network
+etcd_peer_port: 2380
+etcd_peer_scheme: http
+etcd_client_port: 2379
+etcd_client_scheme: http
+
+etcd_data_dir: "/var/lib/etcd"
+
+etcd_listen_peer_urls: "{{ etcd_peer_scheme }}://0.0.0.0:{{ etcd_peer_port }}"
+etcd_listen_client_urls: "{{ etcd_client_scheme }}://0.0.0.0:{{ etcd_client_port }}"
+
+etcd_advertise_client_urls: "{{ etcd_client_scheme }}://{{ hostvars[inventory_hostname]['ansible_host'] }}:{{ etcd_client_port }}"
+etcd_initial_advertise_peer_urls: "{{ etcd_peer_scheme }}://{{ hostvars[inventory_hostname]['ansible_host'] }}:{{ etcd_peer_port }}"
+
+etcd_initial_cluster: "{% for host in groups[etcd_cluster_group] -%}{{ host }}={{ etcd_peer_scheme }}://{{ hostvars[host]['ansible_host'] }}:{{ etcd_peer_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+etcd_initial_cluster_token: "etcd-cluster"
+etcd_initial_cluster_state: "new"

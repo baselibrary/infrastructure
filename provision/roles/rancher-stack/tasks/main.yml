@@ -1,0 +1,79 @@
+---
+- name: verify if project exists
+  uri:
+    method: GET
+    url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/projects?name={{ RANCHER_PROJECT_NAME }}"
+    user:     "{{ RANCHER_APIKEY_PUBLIC }}"
+    password: "{{ RANCHER_APIKEY_SECRET }}"
+    status_code: 200
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  register: project_result
+
+- name: create project
+  uri:
+    method: POST
+    url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/projects"
+    user:     "{{ RANCHER_APIKEY_PUBLIC }}"
+    password: "{{ RANCHER_APIKEY_SECRET }}"
+    body: "{{ lookup('template', 'project.json.j2') }}"
+    body_format: json
+    status_code: 201
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  register: project_response
+  when: project_result.json['data']|length == 0
+
+- name: register project id
+  set_fact:
+    RANCHER_PROJECT_ID: "{{ project_result.json['data'][0]['id'] }}"
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  when: project_result.json['data']|length > 0
+
+- name: register project id
+  set_fact:
+    RANCHER_PROJECT_ID: "{{ project_response.json['id'] }}"
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  when: project_result.json['data']|length == 0
+
+- name: get the default project id
+  uri:
+    method: POST
+    url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/registrationtokens?projectId={{ RANCHER_PROJECT_ID }}"
+    user:     "{{ RANCHER_APIKEY_PUBLIC }}"
+    password: "{{ RANCHER_APIKEY_SECRET }}"
+    return_content: yes
+    status_code: 201
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  register: rancher_token_url
+
+- name: Return the registration URL of Rancher server
+  uri:
+    method: GET
+    url: "{{ rancher_token_url.json['links']['self'] }}"
+    user:     "{{ RANCHER_APIKEY_PUBLIC }}"
+    password: "{{ RANCHER_APIKEY_SECRET }}"
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  register: rancher_token
+
+- name: Register the Host machine with the Rancher server
+  docker:
+    image: "{{ rancher_agent_image }}:{{ rancher_agent_version }}"
+    privileged: yes
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/lib/rancher:/var/lib/rancher
+    env:
+      CATTLE_HOST_LABELS="project={{ RANCHER_PROJECT_NAME }}"
+    command: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/scripts/{{ rancher_token.json['token'] }}"
+  become: yes
