@@ -7,10 +7,7 @@ toc-infra01    ansible_host=10.202.128.83 ansible_user=scaleworks ansible_ssh_pr
 toc-infra02    ansible_host=10.202.128.84 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
 toc-infra03    ansible_host=10.202.128.85 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
 toc-infra04    ansible_host=10.202.128.86 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-deliflow01 ansible_host=10.202.128.88 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-deliflow02 ansible_host=10.202.128.89 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-deliflow03 ansible_host=10.202.128.90 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
-toc-deliflow04 ansible_host=10.202.128.91 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+
 
 [common]
 toc-common01
@@ -32,9 +29,3 @@ toc-infra01
 toc-infra02
 toc-infra03
 toc-infra04
-
-[deliflow]
-toc-deliflow01
-toc-deliflow02
-toc-deliflow03
-toc-deliflow04

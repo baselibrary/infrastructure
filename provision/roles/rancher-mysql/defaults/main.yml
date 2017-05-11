@@ -1,12 +1,17 @@
 ---
 # image
-mysql_name: rancher-mysql
-mysql_image: mysql
-mysql_version: 5.7
+rancher_mysql_name: rancher-mysql
+rancher_mysql_image: mysql
+rancher_mysql_version: 5.7
 
 # network
-mysql_port: 3306
+rancher_mysql_port: 3306
 
-mysql_data_dir: "/var/lib/mysql"
+# config
+rancher_mysql_user: cattle
+rancher_mysql_pass: fsBLqWQFk7yJ
+rancher_mysql_database: cattle
+rancher_mysql_rootpass: "P@ss123456"
 
-mysql_root_password: "P@ss123456"
+# storage
+rancher_mysql_data_dir: "/var/lib/mysql"

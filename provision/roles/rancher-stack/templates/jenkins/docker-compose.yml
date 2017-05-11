@@ -1,0 +1,23 @@
+version: '2'
+services:
+  jenkins:
+    image: baselibrary/jenkins:2
+    ports:
+      - 8080:8080/tcp
+    volumes_from:
+      - jenkins-config
+      - jenkins-volume
+    labels:
+      io.rancher.sidekicks: jenkins-config,jenkins-volume
+      io.rancher.container.hostname_override: container_name
+    entrypoint:
+      - /usr/share/jenkins/rancher/jenkins.sh
+  jenkins-config:
+    image: baselibrary/jenkins-config:1.0
+  jenkins-volume:
+    image: busybox
+    volumes:
+      - /var/lib/jenkins:/var/lib/jenkins
+    labels:
+      io.rancher.container.start_once: 'true'
+    entrypoint: ["chown", "-R", "1000:1000", "/var/lib/jenkins"]

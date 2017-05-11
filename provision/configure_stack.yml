@@ -1,0 +1,6 @@
+---
+# ansible-playbook -e "RANCHER_PROJECT_NAME=infra" -e "RANCHER_STACK_NAME=jenkins" -i provision/scaleworks provision/configure_stack.yml
+- hosts: "{{ RANCHER_PROJECT_NAME }}"
+  gather_facts: yes
+  roles:
+    - rancher-stack

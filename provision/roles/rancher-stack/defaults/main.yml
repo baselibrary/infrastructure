@@ -1,9 +1,116 @@
 ---
-# image
-rancher_agent_name: rancher-server
-rancher_agent_image: rancher/agent
-rancher_agent_version: v1.2.2
-# network
-rancher_agent_port: 8080
-# storage
-rancher_agent_data_dir: "/var/lib/rancher"
+rancher_jenkins_config:
+  security:
+    ldap:
+      server: "ldap://{{ LDAP_HOST }}:{{ LDAP_PORT }}"
+      rootDN: "{{ LDAP_BASE_DN }}"
+      userSearchBase: "{{ LDAP_USER_SEARCH_BASE }}"
+      userSearchFilter: "{{ LDAP_USER_SEARCH_FILTER }}"
+      groupSearchBase: "{{ LDAP_GROUP_SEARCH_BASE }}"
+      groupSearchFilter: "{{ LDAP_HROUP_SEARCH_FILTER }}"
+      groupSearchAttr: memberOf
+      managerDN: "{{ LDAP_BIND_DN }}"
+      managerPassword: "{{ LDAP_BIND_ENCRYPT }}"
+  credentials:
+  - id: jenkins-slave-password
+    description: Jenkis Slave with Password Configuration
+    username: root
+    password: jenkins
+  cloud:
+    docker:
+    - name: toc-infra01
+      serverUrl: tcp://10.202.128.83:2375
+      containerCap: '50'
+      connectTimeout: 5
+      readTimeout: 15
+      credentialsId: jenkins-slave-password
+      templates:
+      - image: baselibrary/jenkins-slave:1.12
+        command: "/usr/sbin/sshd -D"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n
+          \ /tmp:/tmp"
+        volumesFrom: ''
+        environments: SSH_PASS=jenkins\n AUTHORIZED_KEYS=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ340uv5ecAnQebmh5Rz0otp1KYhnt9czUhIiOPRPyzJAhm+rh8M6zl3hn3O9ysEhIVDYU1Dl0H6ssR26uZWAMaTsMeTAjCn4IThxWWO4T5utoMVCcYDtVgbYIIrF5chKX2C7MovEUlNdzjhacfocvzYc1AqTyuNiXM9KtyN4YrxnExX6Uqg/76mJMZ7BFBVpdI2rhqj1oCRyE7zalE76JtBTj4kW2l/5dsYFVlG5EEj6WCibppGOaDxCtw46Z8WmSROF/aV3/kWXW+CVPlCha2uqgkyL6n/4AJ1mtnfnXmJc5m5oLM4EkrCTbwTwOXnWjP6nDThSWn55P0TN3PRSB
+          qsma@thoughtworks.com
+        bindAllPorts: false
+        privileged: false
+        tty: false
+        label: docker
+        remoteFs: "/data/lib/jenkins"
+        remoteFsMapping: "/data/lib/jenkins"
+        instanceCap: '2'
+        numExecutors: 1
+        removeVolume: false
+        pullStrategy: Pull once and update latest
+    - name: toc-infra02
+      serverUrl: tcp://10.202.128.84:2375
+      containerCap: '50'
+      connectTimeout: 5
+      readTimeout: 15
+      credentialsId: jenkins-slave-password
+      templates:
+      - image: baselibrary/jenkins-slave:1.12
+        command: "/usr/sbin/sshd -D"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n
+          \ /tmp:/tmp"
+        volumesFrom: ''
+        environments: SSH_PASS=jenkins\n AUTHORIZED_KEYS=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ340uv5ecAnQebmh5Rz0otp1KYhnt9czUhIiOPRPyzJAhm+rh8M6zl3hn3O9ysEhIVDYU1Dl0H6ssR26uZWAMaTsMeTAjCn4IThxWWO4T5utoMVCcYDtVgbYIIrF5chKX2C7MovEUlNdzjhacfocvzYc1AqTyuNiXM9KtyN4YrxnExX6Uqg/76mJMZ7BFBVpdI2rhqj1oCRyE7zalE76JtBTj4kW2l/5dsYFVlG5EEj6WCibppGOaDxCtw46Z8WmSROF/aV3/kWXW+CVPlCha2uqgkyL6n/4AJ1mtnfnXmJc5m5oLM4EkrCTbwTwOXnWjP6nDThSWn55P0TN3PRSB
+          qsma@thoughtworks.com
+        bindAllPorts: false
+        privileged: false
+        tty: false
+        label: docker
+        remoteFs: "/data/lib/jenkins"
+        remoteFsMapping: "/data/lib/jenkins"
+        instanceCap: '2'
+        numExecutors: 1
+        removeVolume: false
+        pullStrategy: Pull once and update latest
+    - name: toc-infra03
+      serverUrl: tcp://10.202.128.85:2375
+      containerCap: '50'
+      connectTimeout: 5
+      readTimeout: 15
+      credentialsId: jenkins-slave-password
+      templates:
+      - image: baselibrary/jenkins-slave:1.12
+        command: "/usr/sbin/sshd -D"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n
+          \ /tmp:/tmp"
+        volumesFrom: ''
+        environments: SSH_PASS=jenkins\n AUTHORIZED_KEYS=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ340uv5ecAnQebmh5Rz0otp1KYhnt9czUhIiOPRPyzJAhm+rh8M6zl3hn3O9ysEhIVDYU1Dl0H6ssR26uZWAMaTsMeTAjCn4IThxWWO4T5utoMVCcYDtVgbYIIrF5chKX2C7MovEUlNdzjhacfocvzYc1AqTyuNiXM9KtyN4YrxnExX6Uqg/76mJMZ7BFBVpdI2rhqj1oCRyE7zalE76JtBTj4kW2l/5dsYFVlG5EEj6WCibppGOaDxCtw46Z8WmSROF/aV3/kWXW+CVPlCha2uqgkyL6n/4AJ1mtnfnXmJc5m5oLM4EkrCTbwTwOXnWjP6nDThSWn55P0TN3PRSB
+          qsma@thoughtworks.com
+        bindAllPorts: false
+        privileged: false
+        tty: false
+        label: docker
+        remoteFs: "/data/lib/jenkins"
+        remoteFsMapping: "/data/lib/jenkins"
+        instanceCap: '2'
+        numExecutors: 1
+        removeVolume: false
+        pullStrategy: Pull once and update latest
+    - name: toc-infra04
+      serverUrl: tcp://10.202.128.86:2375
+      containerCap: '50'
+      connectTimeout: 5
+      readTimeout: 15
+      credentialsId: jenkins-slave-password
+      templates:
+      - image: baselibrary/jenkins-slave:1.12
+        command: "/usr/sbin/sshd -D"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n
+          \ /tmp:/tmp"
+        volumesFrom: ''
+        environments: SSH_PASS=jenkins\n AUTHORIZED_KEYS=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ340uv5ecAnQebmh5Rz0otp1KYhnt9czUhIiOPRPyzJAhm+rh8M6zl3hn3O9ysEhIVDYU1Dl0H6ssR26uZWAMaTsMeTAjCn4IThxWWO4T5utoMVCcYDtVgbYIIrF5chKX2C7MovEUlNdzjhacfocvzYc1AqTyuNiXM9KtyN4YrxnExX6Uqg/76mJMZ7BFBVpdI2rhqj1oCRyE7zalE76JtBTj4kW2l/5dsYFVlG5EEj6WCibppGOaDxCtw46Z8WmSROF/aV3/kWXW+CVPlCha2uqgkyL6n/4AJ1mtnfnXmJc5m5oLM4EkrCTbwTwOXnWjP6nDThSWn55P0TN3PRSB
+          qsma@thoughtworks.com
+        bindAllPorts: false
+        privileged: false
+        tty: false
+        label: docker
+        remoteFs: "/data/lib/jenkins"
+        remoteFsMapping: "/data/lib/jenkins"
+        instanceCap: '2'
+        numExecutors: 1
+        removeVolume: false
+        pullStrategy: Pull once and update latest

@@ -6,7 +6,7 @@
     ports:
       - "8080:8080"
       - "9345:9345"
-    command: "--db-host {{ mysql_host }} --db-port {{ mysql_port }} --db-user {{ mysql_user }} --db-pass {{ mysql_password }} --db-name {{ mysql_database }} --advertise-address {{ ansible_host }}"
+    command: "--db-host {{ rancher_mysql_host }} --db-port {{ rancher_mysql_port }} --db-user {{ rancher_mysql_user }} --db-pass {{ rancher_mysql_pass }} --db-name {{ rancher_mysql_database }} --advertise-address {{ ansible_host }}"
     restart_policy: unless-stopped
   become: yes
 

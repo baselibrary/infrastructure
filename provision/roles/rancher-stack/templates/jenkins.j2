@@ -1,0 +1,4 @@
+PORT=8080
+volume_work=/var/lib/jenkins
+plugins=git subversion workflow-aggregator dashboard-view cloudbees-folder token-macro simple-theme docker ldap locale swarm
+config={{ rancher_jenkins_config | to_json }}

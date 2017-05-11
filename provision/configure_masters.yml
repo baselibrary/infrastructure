@@ -4,7 +4,7 @@
   become: false
   gather_facts: yes
   vars:
-    mysql_data_dir: /data/lib/mysql
+    rancher_mysql_data_dir: /data/lib/mysql
   roles:
     - rancher-mysql
     - rancher-nginx
@@ -12,7 +12,5 @@
 - hosts: masters
   become: true
   gather_facts: yes
-  vars_files:
-     - 'vars.yml'
   roles:
     - rancher

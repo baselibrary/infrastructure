@@ -1,16 +1,16 @@
 ---
 - name: start mysql server container
   docker_container:
-    name: "{{ mysql_name }}"
-    image: "{{ mysql_image }}:{{ mysql_version }}"
+    name: "{{ rancher_mysql_name }}"
+    image: "{{ rancher_mysql_image }}:{{ rancher_mysql_version }}"
     ports:
-      - "{{ mysql_port }}:3306"
+      - "{{ rancher_mysql_port }}:3306"
     volumes:
-      - "{{ mysql_data_dir }}:/var/lib/mysql"
+      - "{{ rancher_mysql_data_dir }}:/var/lib/mysql"
     env:
-      MYSQL_USER="{{ mysql_user }}"
-      MYSQL_PASSWORD="{{ mysql_password }}"
-      MYSQL_DATABASE="{{ mysql_database }}"
-      MYSQL_ROOT_PASSWORD="{{ mysql_root_password }}"
+      MYSQL_USER="{{ rancher_mysql_user }}"
+      MYSQL_PASSWORD="{{ rancher_mysql_pass }}"
+      MYSQL_DATABASE="{{ rancher_mysql_database }}"
+      MYSQL_ROOT_PASSWORD="{{ rancher_mysql_rootpass }}"
     restart_policy: unless-stopped
   become: yes

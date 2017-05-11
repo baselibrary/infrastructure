@@ -11,6 +11,8 @@
   retries: 5
   delay: 30
 
+- debug: msg="{{ lookup('template', 'apikey.json.j2') }}"
+
 - name: add apikey
   uri:
     method: POST
@@ -23,6 +25,8 @@
   delegate_to: localhost
   when: rancher_auth.status == 200
   delay: 10
+
+- debug: msg="{{ lookup('template', 'openldap.json.j2') }}"
 
 - name: enable ldap authentication
   uri:

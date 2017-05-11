@@ -1,10 +1,6 @@
 ---
 # ansible-playbook -e "RANCHER_PROJECT_NAME=infra" -i provision/scaleworks provision/configure_slaves.yml
-
-
 - hosts: "{{ RANCHER_PROJECT_NAME }}"
   gather_facts: yes
-  vars_files:
-     - 'vars.yml'
   roles:
     - rancher-agent

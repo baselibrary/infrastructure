@@ -27,7 +27,3 @@
       shell: rm -rf /var/lib/docker && rm -rf /data/lib/*
       ignore_errors: true
       become: yes
-    - name: start docker
-      shell: service docker start
-      ignore_errors: true
-      become: yes

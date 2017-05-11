@@ -29,7 +29,7 @@
 - name: wait for nexus server to be ready...
   wait_for:
     port: "{{ nexus_port }}"
-    delay: 10
+    delay: 20
 
 - name: remove nexus server groovy script
   uri:
