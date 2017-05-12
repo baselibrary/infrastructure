@@ -27,11 +27,9 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n
-          \ /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n /tmp:/tmp"
         volumesFrom: ''
-        environments: SSH_PASS=jenkins\n AUTHORIZED_KEYS=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ340uv5ecAnQebmh5Rz0otp1KYhnt9czUhIiOPRPyzJAhm+rh8M6zl3hn3O9ysEhIVDYU1Dl0H6ssR26uZWAMaTsMeTAjCn4IThxWWO4T5utoMVCcYDtVgbYIIrF5chKX2C7MovEUlNdzjhacfocvzYc1AqTyuNiXM9KtyN4YrxnExX6Uqg/76mJMZ7BFBVpdI2rhqj1oCRyE7zalE76JtBTj4kW2l/5dsYFVlG5EEj6WCibppGOaDxCtw46Z8WmSROF/aV3/kWXW+CVPlCha2uqgkyL6n/4AJ1mtnfnXmJc5m5oLM4EkrCTbwTwOXnWjP6nDThSWn55P0TN3PRSB
-          qsma@thoughtworks.com
+        environments: SSH_PASS=jenkins
         bindAllPorts: false
         privileged: false
         tty: false
@@ -51,11 +49,9 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n
-          \ /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n /tmp:/tmp"
         volumesFrom: ''
-        environments: SSH_PASS=jenkins\n AUTHORIZED_KEYS=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ340uv5ecAnQebmh5Rz0otp1KYhnt9czUhIiOPRPyzJAhm+rh8M6zl3hn3O9ysEhIVDYU1Dl0H6ssR26uZWAMaTsMeTAjCn4IThxWWO4T5utoMVCcYDtVgbYIIrF5chKX2C7MovEUlNdzjhacfocvzYc1AqTyuNiXM9KtyN4YrxnExX6Uqg/76mJMZ7BFBVpdI2rhqj1oCRyE7zalE76JtBTj4kW2l/5dsYFVlG5EEj6WCibppGOaDxCtw46Z8WmSROF/aV3/kWXW+CVPlCha2uqgkyL6n/4AJ1mtnfnXmJc5m5oLM4EkrCTbwTwOXnWjP6nDThSWn55P0TN3PRSB
-          qsma@thoughtworks.com
+        environments: SSH_PASS=jenkins
         bindAllPorts: false
         privileged: false
         tty: false
@@ -75,11 +71,9 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n
-          \ /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n /tmp:/tmp"
         volumesFrom: ''
-        environments: SSH_PASS=jenkins\n AUTHORIZED_KEYS=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ340uv5ecAnQebmh5Rz0otp1KYhnt9czUhIiOPRPyzJAhm+rh8M6zl3hn3O9ysEhIVDYU1Dl0H6ssR26uZWAMaTsMeTAjCn4IThxWWO4T5utoMVCcYDtVgbYIIrF5chKX2C7MovEUlNdzjhacfocvzYc1AqTyuNiXM9KtyN4YrxnExX6Uqg/76mJMZ7BFBVpdI2rhqj1oCRyE7zalE76JtBTj4kW2l/5dsYFVlG5EEj6WCibppGOaDxCtw46Z8WmSROF/aV3/kWXW+CVPlCha2uqgkyL6n/4AJ1mtnfnXmJc5m5oLM4EkrCTbwTwOXnWjP6nDThSWn55P0TN3PRSB
-          qsma@thoughtworks.com
+        environments: SSH_PASS=jenkins
         bindAllPorts: false
         privileged: false
         tty: false
@@ -99,11 +93,9 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n
-          \ /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n /tmp:/tmp"
         volumesFrom: ''
-        environments: SSH_PASS=jenkins\n AUTHORIZED_KEYS=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ340uv5ecAnQebmh5Rz0otp1KYhnt9czUhIiOPRPyzJAhm+rh8M6zl3hn3O9ysEhIVDYU1Dl0H6ssR26uZWAMaTsMeTAjCn4IThxWWO4T5utoMVCcYDtVgbYIIrF5chKX2C7MovEUlNdzjhacfocvzYc1AqTyuNiXM9KtyN4YrxnExX6Uqg/76mJMZ7BFBVpdI2rhqj1oCRyE7zalE76JtBTj4kW2l/5dsYFVlG5EEj6WCibppGOaDxCtw46Z8WmSROF/aV3/kWXW+CVPlCha2uqgkyL6n/4AJ1mtnfnXmJc5m5oLM4EkrCTbwTwOXnWjP6nDThSWn55P0TN3PRSB
-          qsma@thoughtworks.com
+        environments: SSH_PASS=jenkins
         bindAllPorts: false
         privileged: false
         tty: false

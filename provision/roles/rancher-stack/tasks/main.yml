@@ -17,7 +17,7 @@
 
 - name: install rancher stack
   command: "rancher --url http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1 --access-key {{ RANCHER_APIKEY_PUBLIC }} --secret-key {{ RANCHER_APIKEY_SECRET }} --environment {{ RANCHER_PROJECT_NAME }} catalog install --name {{ RANCHER_STACK_NAME }} --answers /tmp/{{ RANCHER_STACK_NAME }}.txt ThoughtWorks/{{ RANCHER_STACK_NAME }}"
-  when: rancher_stack.stdout == ""
+  when: rancher_stack.stdout.find(RANCHER_STACK_NAME) == -1
   become: no
   run_once: yes
   delegate_to: localhost
