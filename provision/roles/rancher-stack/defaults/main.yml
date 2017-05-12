@@ -27,7 +27,7 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins:/data/lib/jenkins\n /tmp:/tmp"
         volumesFrom: ''
         environments: SSH_PASS=jenkins
         bindAllPorts: false
@@ -49,7 +49,7 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins:/data/lib/jenkins\n /tmp:/tmp"
         volumesFrom: ''
         environments: SSH_PASS=jenkins
         bindAllPorts: false
@@ -71,7 +71,7 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins:/data/lib/jenkins\n /tmp:/tmp"
         volumesFrom: ''
         environments: SSH_PASS=jenkins
         bindAllPorts: false
@@ -93,7 +93,7 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\\n /data/lib/jenkins:/data/lib/jenkins\\n /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins:/data/lib/jenkins\n /tmp:/tmp"
         volumesFrom: ''
         environments: SSH_PASS=jenkins
         bindAllPorts: false
