@@ -1,0 +1,11 @@
+rancher_catalogs:
+  catalogs:
+    library:
+      url: https://git.rancher.io/rancher-catalog.git
+      branch: master
+    community:
+      url: https://git.rancher.io/community-catalog.git
+      branch: master
+    ThoughtWorks:
+      url: https://github.com/fly2wind/basecatalog.git
+      branch: master

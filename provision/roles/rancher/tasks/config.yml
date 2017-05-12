@@ -11,30 +11,27 @@
   retries: 5
   delay: 30
 
-- debug: msg="{{ lookup('template', 'apikey.json.j2') }}"
-
-- name: add apikey
+- name: config apikey
   uri:
     method: POST
     url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/apikeys"
-    body: "{{ lookup('template', 'apikey.json.j2') }}"
+    body: "{{ rancher_apikeys_body | to_json }}"
     body_format: json
     status_code: 201
   become: no
   run_once: yes
   delegate_to: localhost
+  ignore_errors: true
   when: rancher_auth.status == 200
   delay: 10
 
-- debug: msg="{{ lookup('template', 'openldap.json.j2') }}"
-
-- name: enable ldap authentication
+- name: config ldap authentication
   uri:
     method: POST
     url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/openldapconfigs"
     user:     "{{ RANCHER_APIKEY_PUBLIC }}"
     password: "{{ RANCHER_APIKEY_SECRET }}"
-    body: "{{ lookup('template', 'openldap.json.j2') }}"
+    body: "{{ rancher_openldap_body | to_json }}"
     body_format: json
     status_code: 201
   become: no
@@ -43,17 +40,31 @@
   when: rancher_auth.status == 200
   delay: 10
 
-- name: create admin user
+- name: config admin user
   uri:
     method: PUT
     url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/accounts/1a1"
     user:     "{{ RANCHER_APIKEY_PUBLIC }}"
     password: "{{ RANCHER_APIKEY_SECRET }}"
-    body: "{{ lookup('template', 'user.json.j2') }}"
+    body: "{{ rancher_admins_body | to_json }}"
     body_format: json
     status_code: 200
   become: no
   run_once: yes
   delegate_to: localhost
   when: rancher_auth.status == 200
+  delay: 10
+
+- name: config catalogs
+  uri:
+      method: PUT
+      url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/settings/catalog.url"
+      user:     "{{ RANCHER_APIKEY_PUBLIC }}"
+      password: "{{ RANCHER_APIKEY_SECRET }}"
+      body: "{{ rancher_catalogs_body | to_json }}"
+      body_format: json
+      status_code: 200
+  become: no
+  run_once: yes
+  delegate_to: localhost
   delay: 10

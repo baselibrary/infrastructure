@@ -1,6 +1,6 @@
 ---
 
-- name: Copy docker-compose for stack
+- name: config rancher stack
   template:
     src: "{{ RANCHER_STACK_NAME }}.j2"
     dest: "/tmp/{{ RANCHER_STACK_NAME }}.txt"
@@ -8,8 +8,16 @@
   run_once: yes
   delegate_to: localhost
 
-- name: Run rancher-compose
-  shell: "rancher --url http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1 --access-key {{ RANCHER_APIKEY_PUBLIC }} --secret-key {{ RANCHER_APIKEY_SECRET }} --environment {{ RANCHER_PROJECT_NAME }} catalog install --name {{ RANCHER_STACK_NAME }} --answers /tmp/{{ RANCHER_STACK_NAME }}.txt ThoughtWorks/{{ RANCHER_STACK_NAME }}"
+- name: check rancher stack
+  command: "rancher --url http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1 --access-key {{ RANCHER_APIKEY_PUBLIC }} --secret-key {{ RANCHER_APIKEY_SECRET }} --environment {{ RANCHER_PROJECT_NAME }} stacks | grep ThoughtWorks/{{ RANCHER_STACK_NAME }}"
+  register: rancher_stack
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: install rancher stack
+  command: "rancher --url http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1 --access-key {{ RANCHER_APIKEY_PUBLIC }} --secret-key {{ RANCHER_APIKEY_SECRET }} --environment {{ RANCHER_PROJECT_NAME }} catalog install --name {{ RANCHER_STACK_NAME }} --answers /tmp/{{ RANCHER_STACK_NAME }}.txt ThoughtWorks/{{ RANCHER_STACK_NAME }}"
+  when: rancher_stack.stdout == ""
   become: no
   run_once: yes
   delegate_to: localhost

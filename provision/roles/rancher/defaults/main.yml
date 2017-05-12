@@ -7,3 +7,51 @@ rancher_version: v1.6.0
 rancher_port: 8080
 # storage
 rancher_data_dir: "/var/lib/rancher"
+
+rancher_catalogs:
+  catalogs:
+    library:
+      url: https://git.rancher.io/rancher-catalog.git
+      branch: master
+    community:
+      url: https://git.rancher.io/community-catalog.git
+      branch: master
+
+# json body
+rancher_apikeys_body:
+  name: apikey
+  description: infrastructure apikey
+  accountId: 1a1
+  publicValue: "{{ RANCHER_APIKEY_PUBLIC }}"
+  secretValue: "{{ RANCHER_APIKEY_SECRET }}"
+
+rancher_openldap_body:
+  enabled: true
+  accessMode: "unrestricted"
+  server: "{{ LDAP_HOST }}"
+  port: "{{ LDAP_PORT }}"
+  tls: false
+  serviceAccountUsername: "{{ LDAP_USER }}@{{ LDAP_DOMAIN }}"
+  serviceAccountPassword: "{{ LDAP_BIND_PASS }}"
+  domain: "{{ LDAP_BASE_DN }}"
+  userLoginField: "sAMAccountName"
+  userObjectClass: "person"
+  userNameField: "name"
+  userSearchField: "sAMAccountName"
+  groupObjectClass: "group"
+  groupNameField: "name"
+  groupSearchField: "sAMAccountName"
+  connectionTimeout: 1000
+
+rancher_admins_body:
+  name: "{{ LDAP_USER }}"
+  kind: "admin"
+  externalId: "{{ LDAP_BIND_DN }}"
+  externalIdType: "openldap_user"
+
+rancher_catalogs_body:
+  id: catalog.url
+  name: catalog.url
+  source: Database
+  value: "{{ rancher_catalogs | to_json }}"
+  activeValue: "{{ rancher_catalogs | to_json }}"
