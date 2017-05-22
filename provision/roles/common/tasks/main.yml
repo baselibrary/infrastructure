@@ -10,6 +10,7 @@
     - main.yml
 
 - include: additional.yml
+  when: additional_disks is defined
   tags:
     - development
     - common

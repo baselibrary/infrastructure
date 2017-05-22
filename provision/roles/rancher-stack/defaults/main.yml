@@ -1,4 +1,16 @@
 ---
+rancher_jenkins_plugins:
+  - git
+  - subversion
+  - workflow-aggregator
+  - dashboard-view
+  - cloudbees-folder
+  - token-macro
+  - simple-theme
+  - docker
+  - ldap
+  - locale
+  - swarm
 rancher_jenkins_config:
   security:
     ldap:

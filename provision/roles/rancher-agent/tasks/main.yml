@@ -55,7 +55,7 @@
   delegate_to: localhost
   register: rancher_token_url
 
-- name: Return the registration URL of Rancher server
+- name: return the registration URL of Rancher server
   uri:
     method: GET
     url: "{{ rancher_token_url.json['links']['self'] }}"
@@ -66,14 +66,56 @@
   delegate_to: localhost
   register: rancher_token
 
-- name: Register the Host machine with the Rancher server
+- name: register the Host machine with the Rancher server
   docker:
     image: "{{ rancher_agent_image }}:{{ rancher_agent_version }}"
     privileged: yes
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - /data/lib/rancher:/var/lib/rancher
+      - /var/run/docker.sock:/var/run/docker.sock
     env:
-      CATTLE_HOST_LABELS="project={{ RANCHER_PROJECT_NAME }}"
+      CATTLE_HOST_LABELS="project={{ RANCHER_PROJECT_NAME }}&host.type=ci"
     command: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/scripts/{{ rancher_token.json['token'] }}"
   become: yes
+  when: inventory_hostname == groups[RANCHER_PROJECT_NAME][0]
+
+- name: register the Host machine with the Rancher server
+  docker:
+    image: "{{ rancher_agent_image }}:{{ rancher_agent_version }}"
+    privileged: yes
+    volumes:
+      - /data/lib/rancher:/var/lib/rancher
+      - /var/run/docker.sock:/var/run/docker.sock
+    env:
+      CATTLE_HOST_LABELS="project={{ RANCHER_PROJECT_NAME }}&host.type=node"
+    command: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/scripts/{{ rancher_token.json['token'] }}"
+  become: yes
+  when: inventory_hostname != groups[RANCHER_PROJECT_NAME][0]
+
+- name: config rancher stack
+  template:
+    src: "portworx.j2"
+    dest: "/tmp/portworx.txt"
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- debug: msg="rancher --url http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1 --access-key {{ RANCHER_APIKEY_PUBLIC }} --secret-key {{ RANCHER_APIKEY_SECRET }} --environment {{ RANCHER_PROJECT_NAME }} stacks --system | grep portworx"
+
+
+- name: check rancher stack
+  command: "rancher --url http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1 --access-key {{ RANCHER_APIKEY_PUBLIC }} --secret-key {{ RANCHER_APIKEY_SECRET }} --environment {{ RANCHER_PROJECT_NAME }} stacks --system | grep portworx"
+  register: rancher_stack
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- debug: msg="rancher --url http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1 --access-key {{ RANCHER_APIKEY_PUBLIC }} --secret-key {{ RANCHER_APIKEY_SECRET }} --environment {{ RANCHER_PROJECT_NAME }} catalog install --system --name portworx --answers /tmp/portworx.txt library/portworx"
+
+
+- name: install rancher stack
+  command: "rancher --url http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1 --access-key {{ RANCHER_APIKEY_PUBLIC }} --secret-key {{ RANCHER_APIKEY_SECRET }} --environment {{ RANCHER_PROJECT_NAME }} catalog install --system --name portworx --answers /tmp/portworx.txt library/portworx"
+  when: rancher_stack.stdout.find('portworx') == -1
+  become: no
+  run_once: yes
+  delegate_to: localhost

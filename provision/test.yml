@@ -1,0 +1,13 @@
+# ansible-playbook -i provision/scaleworks provision/test.yml
+---
+- hosts: localhost
+  tasks:
+    - rancher_apikey:
+        url: 'http://10.202.128.79:8080/v1/'
+        access_key: '2A984C1F5D0EE3D204BE'
+        secret_key: 'TfAUTVH7xsrKioHkAokYvx1yAEk57Fyepa6d5G5r'
+        name: aaaaa
+        account: 1a1
+        publicValue: bbbb
+        secretValue: sadasd
+        state: absent

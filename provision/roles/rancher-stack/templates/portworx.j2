@@ -1,0 +1,5 @@
+VOLUME_DRIVER_NAME=pxd
+CLUSTER_ID={{ RANCHER_PROJECT_NAME }}
+KVDB="etcd://{% for host in groups[etcd_cluster_group] -%}{{ hostvars[host]['ansible_host'] }}:2379{% if not loop.last %},{% endif %}{% endfor %}"
+USE_DISKS='-s /dev/sdb'
+HEADER_DIR=/usr/src
