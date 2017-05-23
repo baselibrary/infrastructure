@@ -52,6 +52,6 @@ rancher_admins_body:
 rancher_catalogs_body:
   id: catalog.url
   name: catalog.url
-  source: Database
+  source: "Default Environment Variables"
   value: "{{ rancher_catalogs | to_json }}"
   activeValue: "{{ rancher_catalogs | to_json }}"

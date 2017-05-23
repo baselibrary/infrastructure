@@ -31,7 +31,7 @@ rancher_jenkins_config:
   cloud:
     docker:
     - name: toc-infra01
-      serverUrl: tcp://10.202.128.83:2375
+      serverUrl: tcp://10.202.128.112:2375
       containerCap: '50'
       connectTimeout: 5
       readTimeout: 15
@@ -53,7 +53,7 @@ rancher_jenkins_config:
         removeVolume: false
         pullStrategy: Pull once and update latest
     - name: toc-infra02
-      serverUrl: tcp://10.202.128.84:2375
+      serverUrl: tcp://10.202.128.113:2375
       containerCap: '50'
       connectTimeout: 5
       readTimeout: 15
@@ -75,29 +75,7 @@ rancher_jenkins_config:
         removeVolume: false
         pullStrategy: Pull once and update latest
     - name: toc-infra03
-      serverUrl: tcp://10.202.128.85:2375
-      containerCap: '50'
-      connectTimeout: 5
-      readTimeout: 15
-      credentialsId: jenkins-slave-password
-      templates:
-      - image: baselibrary/jenkins-slave:1.12
-        command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins:/data/lib/jenkins\n /tmp:/tmp"
-        volumesFrom: ''
-        environments: SSH_PASS=jenkins
-        bindAllPorts: false
-        privileged: false
-        tty: false
-        label: docker
-        remoteFs: "/data/lib/jenkins"
-        remoteFsMapping: "/data/lib/jenkins"
-        instanceCap: '2'
-        numExecutors: 1
-        removeVolume: false
-        pullStrategy: Pull once and update latest
-    - name: toc-infra04
-      serverUrl: tcp://10.202.128.86:2375
+      serverUrl: tcp://10.202.128.114:2375
       containerCap: '50'
       connectTimeout: 5
       readTimeout: 15

@@ -12,5 +12,8 @@
 - hosts: masters
   become: true
   gather_facts: yes
+  vars:
+    etcd_data_dir: /data/lib/etcd
   roles:
+    - etcd
     - rancher

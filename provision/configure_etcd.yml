@@ -1,9 +1,0 @@
----
-# ansible-playbook -i provision/scaleworks provision/configure_etcd.yml
-- hosts: etcd
-  become: false
-  gather_facts: yes
-  vars:
-    etcd_data_dir: /data/lib/etcd
-  roles:
-    - etcd

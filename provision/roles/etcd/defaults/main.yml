@@ -4,7 +4,7 @@ etcd_name: etcd-server
 etcd_image: quay.io/coreos/etcd
 etcd_version: v3.1.6
 
-etcd_cluster_group: etcd
+etcd_cluster_group: masters
 
 # network
 etcd_peer_port: 2380
