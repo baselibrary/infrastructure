@@ -1,0 +1,6 @@
+---
+# ansible-playbook -e "RANCHER_PROJECT_NAME=infra" -i provision/scaleworks provision/configure_develop.yml
+- hosts: "{{ RANCHER_PROJECT_NAME }}"
+  gather_facts: yes
+  roles:
+    - rancher-develop

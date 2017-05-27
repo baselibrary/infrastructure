@@ -1,0 +1,33 @@
+---
+- name: ensuers dir exists
+  file:
+    path: "/root/{{ item }}"
+    state: directory
+  become: yes
+  with_items:
+    - ".m2"
+    - ".gradle"
+
+- name: config maven
+  template:
+    src: "maven.j2"
+    dest: "/root/.m2/settings.xml"
+  become: yes
+
+- name: config gradle
+  template:
+    src: "gradle.j2"
+    dest: "/root/.gradle/init.gradle"
+  become: yes
+
+- name: config npmjs
+  template:
+    src: "npm.j2"
+    dest: "/root/.npmrc"
+  become: yes
+
+- name: config bowerjs
+  template:
+    src: "bower.j2"
+    dest: "/root/.bowerrc"
+  become: yes

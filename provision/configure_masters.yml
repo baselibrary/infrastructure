@@ -3,10 +3,7 @@
 - hosts: common
   become: false
   gather_facts: yes
-  vars:
-    rancher_mysql_data_dir: /data/lib/mysql
   roles:
-    - rancher-mysql
     - rancher-nginx
 
 - hosts: masters

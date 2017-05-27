@@ -1,0 +1,92 @@
+---
+- name: create mysql user
+  mysql_user:
+    name: "{{ gogs_mysql_user }}"
+    password: "{{ gogs_mysql_pass }}"
+    priv: "*.*:ALL"
+    host: "%"
+    login_host: "{{ GOGS_MYSQL_LOGIN_HOST }}"
+    login_port: "{{ GOGS_MYSQL_LOGIN_PORT }}"
+    login_user: "{{ GOGS_MYSQL_LOGIN_USER }}"
+    login_password: "{{ GOGS_MYSQL_LOGIN_PASS }}"
+    state: present
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create mysql database
+  mysql_db:
+    name: "{{ gogs_mysql_database }}"
+    login_host: "{{ GOGS_MYSQL_LOGIN_HOST }}"
+    login_port: "{{ GOGS_MYSQL_LOGIN_PORT }}"
+    login_user: "{{ GOGS_MYSQL_LOGIN_USER }}"
+    login_password: "{{ GOGS_MYSQL_LOGIN_PASS }}"
+    state: present
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create gogs group
+  group:
+    name: git
+    state: present
+  become: yes
+
+- name: create gogs user
+  user:
+    name: git
+    group: git
+    shell: /bin/bash
+    generate_ssh_key: yes
+  become: yes
+
+- name: create gogs data directory
+  file:
+    path: "{{ gogs_data_dir }}/gogs/conf"
+    state: "directory"
+    owner: git
+    group: root
+  become: yes
+
+- name: generate gogs script
+  template:
+    src: gogs.j2
+    dest: "/app/gogs/gogs"
+    owner: root
+    group: root
+    mode: 0755
+  become: yes
+
+- name: generate gogs config
+  template:
+    src: app.ini.j2
+    dest: "{{ gogs_data_dir }}/gogs/conf/app.ini"
+    owner: git
+    group: git
+  become: yes
+
+- name: start gogs server container
+  docker_container:
+    name: "{{ gogs_name }}"
+    image: "{{ gogs_image }}:{{ gogs_version }}"
+    ports:
+      - "{{ gogs_web_port }}:3000"
+      - "{{ gogs_ssh_port }}:22"
+    volumes:
+      - "{{ gogs_data_dir }}:/data"
+      - "/etc/passwd:/etc/passwd"
+      - "/home/git/.ssh:/home/git/.ssh"
+    restart_policy: unless-stopped
+  become: yes
+
+- slurp:
+    src: "/home/git/.ssh/id_rsa.pub"
+  register: authorized_key
+  become: yes
+
+- name: set authorized key took from file
+  lineinfile:
+    path: /home/git/.ssh/authorized_keys
+    regexp: '^no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty'
+    line: "no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty {{ authorized_key.content | b64decode }}"
+  become: yes

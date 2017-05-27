@@ -1,0 +1,35 @@
+allprojects{
+    repositories {
+        def REPOSITORY_URL = 'http://{{ hostvars[groups['repository'][0]]['ansible_host'] }}/repository/maven-public/'
+        all { ArtifactRepository repo ->
+            if(repo instanceof MavenArtifactRepository) {
+                def url = repo.url.toString()
+                if(url.startsWith('https://repo1.maven.org/maven2') || url.startsWith('https://jcenter.bintray.com')) {
+                    project.logger.lifecycle "Project repository ${repo.url} removed. Only $REPOSITORY_URL is allowed"
+                    remove repo
+                }
+            }
+        }
+        maven {
+            url REPOSITORY_URL
+        }
+    }
+}
+
+buildscript{
+    repositories {
+        def REPOSITORY_URL = 'http://{{ hostvars[groups['repository'][0]]['ansible_host'] }}/repository/maven-public/'
+        all { ArtifactRepository repo ->
+            if(repo instanceof MavenArtifactRepository) {
+                def url = repo.url.toString()
+                if(url.startsWith('https://repo1.maven.org/maven2') || url.startsWith('https://jcenter.bintray.com')) {
+                    project.logger.lifecycle "Project repository ${repo.url} removed. Only $REPOSITORY_URL is allowed"
+                    remove repo
+                }
+            }
+        }
+        maven {
+            url REPOSITORY_URL
+        }
+    }
+}

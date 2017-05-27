@@ -9,7 +9,7 @@
         fstype: ext4
         mount_options: defaults
         mount: /data
-    docker_opts: "--registry-mirror=http://{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000 --insecure-registry={{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000"
+    docker_opts: "-H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375 --registry-mirror=http://{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000 --insecure-registry={{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000"
     docker_registries:
       - host: "https://index.docker.io/v1/"
         auth: "Zmx5MndpbmQ6cHdjNTAycg=="

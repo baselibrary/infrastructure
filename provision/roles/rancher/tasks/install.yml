@@ -1,4 +1,31 @@
 ---
+- name: create mysql user
+  mysql_user:
+    name: "{{ RANCHER_MYSQL_USER }}"
+    password: "{{ RANCHER_MYSQL_PASS }}"
+    priv: "*.*:ALL"
+    host_all: yes
+    login_host: "{{ RANCHER_MYSQL_HOST }}"
+    login_port: "{{ RANCHER_MYSQL_PORT }}"
+    login_user: "{{ MYSQL_ROOT_USER }}"
+    login_password: "{{ MYSQL_ROOT_PASS }}"
+    state: present
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create mysql database
+  mysql_db:
+    name: "{{ RANCHER_MYSQL_DATABASE }}"
+    login_host: "{{ RANCHER_MYSQL_HOST }}"
+    login_port: "{{ RANCHER_MYSQL_PORT }}"
+    login_user: "{{ MYSQL_ROOT_USER }}"
+    login_password: "{{ MYSQL_ROOT_PASS }}"
+    state: present
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
 - name: start rancher server container
   docker_container:
     name: "{{ rancher_name }}"
@@ -6,7 +33,7 @@
     ports:
       - "8080:8080"
       - "9345:9345"
-    command: "--db-host {{ rancher_mysql_host }} --db-port {{ rancher_mysql_port }} --db-user {{ rancher_mysql_user }} --db-pass {{ rancher_mysql_pass }} --db-name {{ rancher_mysql_database }} --advertise-address {{ ansible_host }}"
+    command: "--db-host {{ RANCHER_MYSQL_HOST }} --db-port {{ RANCHER_MYSQL_PORT }} --db-user {{ RANCHER_MYSQL_USER }} --db-pass {{ RANCHER_MYSQL_PASS }} --db-name {{ RANCHER_MYSQL_DATABASE }} --advertise-address {{ ansible_host }}"
     restart_policy: unless-stopped
   become: yes
 

@@ -4,6 +4,24 @@
   become: false
   gather_facts: yes
   vars:
-    vault_data_dir: /data/lib/vault
+    nginx_vhosts:
+      - listen: "8080"
+        server_name: "localhost"
+        extra_parameters: |
+          location / {
+            proxy_http_version 1.1;
+            proxy_pass http://rancher;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          }
+    nginx_upstreams:
+      - name: rancher
+        servers: "{% set vars = [] %}{% for host in rancher_masters_host %}{{ vars.append(hostvars[host]['ansible_host'] + ':8080') }}{% endfor %}{{ vars }}"
+    mysql_data_dir: /data/lib/mysql
   roles:
-    - vault
+    - nginx
+    - mysql

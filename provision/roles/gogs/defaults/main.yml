@@ -1,0 +1,20 @@
+---
+# image
+gogs_name: gogs-server
+gogs_image: gogs/gogs
+gogs_version: latest
+
+# domain
+gogs_domain: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
+
+# network
+gogs_web_port: 3000
+gogs_ssh_port: 10022
+
+# storage
+gogs_data_dir: "/var/lib/gogs"
+
+# database
+gogs_mysql_user: gogs
+gogs_mysql_pass: fsBLqWQFk7yJ
+gogs_mysql_database: gogs

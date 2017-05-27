@@ -39,7 +39,7 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins:/data/lib/jenkins\n /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins/workspace:/data/lib/jenkins/workspace\n /tmp:/tmp /root/.m2:/root/.m2\n /root/.gradle:/root/.gradle\n /root/.npmrc:/root/.npmrc\n /root/.bowerrc:/root/.bowerrc"
         volumesFrom: ''
         environments: SSH_PASS=jenkins
         bindAllPorts: false
@@ -61,7 +61,7 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins:/data/lib/jenkins\n /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins/workspace:/data/lib/jenkins/workspace\n /tmp:/tmp /root/.m2:/root/.m2\n /root/.gradle:/root/.gradle\n /root/.npmrc:/root/.npmrc\n /root/.bowerrc:/root/.bowerrc"
         volumesFrom: ''
         environments: SSH_PASS=jenkins
         bindAllPorts: false
@@ -83,7 +83,7 @@ rancher_jenkins_config:
       templates:
       - image: baselibrary/jenkins-slave:1.12
         command: "/usr/sbin/sshd -D"
-        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins:/data/lib/jenkins\n /tmp:/tmp"
+        volumes: "/var/run/docker.sock:/var/run/docker.sock\n /data/lib/jenkins/workspace:/data/lib/jenkins/workspace\n /tmp:/tmp /root/.m2:/root/.m2\n /root/.gradle:/root/.gradle\n /root/.npmrc:/root/.npmrc\n /root/.bowerrc:/root/.bowerrc"
         volumesFrom: ''
         environments: SSH_PASS=jenkins
         bindAllPorts: false

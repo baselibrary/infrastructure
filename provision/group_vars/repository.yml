@@ -5,3 +5,11 @@ docker_registries:
     auth: "Zmx5MndpbmQ6cHdjNTAycg=="
     email: "fly2wind@gmail.com"
 docker_rpmpackage: no
+
+
+gogs_domain: git.thoughtworks.io
+
+GOGS_MYSQL_LOGIN_HOST: "{{ hostvars[groups['common'][0]]['ansible_host'] }}"
+GOGS_MYSQL_LOGIN_PORT: 3306
+GOGS_MYSQL_LOGIN_USER: root
+GOGS_MYSQL_LOGIN_PASS: "P@ss123456"

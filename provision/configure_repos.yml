@@ -3,7 +3,10 @@
 - hosts: repository
   gather_facts: yes
   vars:
-    nexus_port: 80
+    gogs_web_port: 3000
+    gogs_ssh_port: 10022
+    gogs_data_dir: /data/lib/gogs
+    nexus_port: 8081
     nexus_data_dir: "/data/lib/nexus"
     nexus_local_users:
       - username: fly2wind
@@ -13,5 +16,35 @@
         password: pwc502r
         roles:
           - nx-admin
+    nginx_vhosts:
+      - listen: "80"
+        server_name: "repo.thoughtworks.io"
+        extra_parameters: |
+          location / {
+            proxy_pass http://repo;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          }
+      - listen: "80"
+        server_name: "git.thoughtworks.io"
+        extra_parameters: |
+          location / {
+            proxy_pass http://git;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          }
+    nginx_upstreams:
+      - name: repo
+        servers:
+          - "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:{{ nexus_port }}"
+      - name: git
+        servers:
+          - "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:{{ gogs_web_port }}"        
   roles:
+    - gogs
     - nexus
+    - nginx

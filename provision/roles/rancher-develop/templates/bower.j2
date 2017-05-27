@@ -1,0 +1,9 @@
+{
+    "registry" : {
+        "search" : [
+            "http://{{ hostvars[groups['repository'][0]]['ansible_host'] }}/repository/bower-public"
+        ],
+        "register" : "http://{{ hostvars[groups['repository'][0]]['ansible_host'] }}/repository/bower-public"
+   },
+   "resolvers" : [ "bower-nexus3-resolver" ]
+}

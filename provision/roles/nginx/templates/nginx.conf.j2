@@ -1,0 +1,41 @@
+user nginx;
+worker_processes {{ nginx_worker_processes }};
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events {
+  worker_connections {{ nginx_worker_connections }};
+}
+
+http {
+  include      /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
+  log_format main {{ nginx_log_format|indent(23) }};
+  access_log /dev/stdout main;
+
+  sendfile    on;
+  tcp_nopush  {{ nginx_tcp_nopush }};
+  tcp_nodelay {{ nginx_tcp_nodelay }};
+
+  keepalive_timeout  65;
+
+  #gzip  on;
+
+{% for upstream in nginx_upstreams %}
+  upstream {{ upstream.name }} {
+    {% if upstream.strategy is defined %}
+    {{ upstream.strategy }};
+    {% endif %}
+    {% for server in upstream.servers %}
+    server {{ server }};
+    {% endfor %}
+    {% if upstream.keepalive is defined %}
+    keepalive {{ upstream.keepalive }};
+    {% endif %}
+  }
+{% endfor %}
+
+  include /etc/nginx/conf.d/*.conf;
+}
