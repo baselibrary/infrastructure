@@ -4,26 +4,26 @@
 
 - name: ensuers docker certs dir exists
   file:
-    path=/etc/docker/certs.d
-    state=directory
+    path: /etc/docker/certs.d
+    state: directory
   become: yes
   when: docker_certs is defined
 
-#- name: ensuers docker certs host dir exists
-#  file:
-#    path="/etc/docker/certs.d/{{ item.host }}"
-#    state=directory
-#  with_items: "{{ docker_certs }}"
-#  become: yes
-#  when: docker_certs is defined
+- name: ensuers docker certs host dir exists
+  file:
+    path: "/etc/docker/certs.d/{{ item.host }}"
+    state: directory
+  with_items: "{{ docker_certs }}"
+  become: yes
+  when: docker_certs is defined
 
-#- name:
-#  copy:
-#    src="{{ item.cert }}"
-#    dest="/etc/docker/certs.d/{{ item.host }}/ca.crt"
-#  with_items: "{{ docker_certs }}"
-#  become: yes
-#  when: docker_certs is defined
+- name:
+  copy:
+    src: "{{ item.cert }}"
+    dest: "/etc/docker/certs.d/{{ item.host }}/ca.crt"
+  with_items: "{{ docker_certs }}"
+  become: yes
+  when: docker_certs is defined
 
 - name: ensuers docker config dir exists
   file:
