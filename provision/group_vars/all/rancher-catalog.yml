@@ -9,3 +9,6 @@ rancher_catalogs:
     ThoughtWorks:
       url: https://github.com/fly2wind/basecatalog.git
       branch: master
+    LeanSW:
+      url: https://github.com/tw-leansw/leansw-rancher-catalog.git
+      branch: master
