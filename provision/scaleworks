@@ -13,6 +13,7 @@ toc-kube03     ansible_host=10.202.128.117 ansible_user=scaleworks ansible_ssh_p
 toc-deliflow01 ansible_host=10.202.128.119 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
 toc-deliflow02 ansible_host=10.202.128.120 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
 toc-deliflow03 ansible_host=10.202.128.121 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
+toc-demo01     ansible_host=10.202.128.122 ansible_user=scaleworks ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 [common]
 toc-common01
@@ -40,3 +41,6 @@ toc-kube03
 toc-deliflow01
 toc-deliflow02
 toc-deliflow03
+
+[demo]
+toc-demo01
