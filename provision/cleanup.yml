@@ -1,6 +1,6 @@
 ---
-# ansible-playbook -i provision/scaleworks provision/cleanup.yml
-- hosts: all
+# ansible-playbook -e "RANCHER_PROJECT_NAME=kube" -i provision/scaleworks provision/cleanup.yml
+- hosts: "{{ RANCHER_PROJECT_NAME }}"
   gather_facts: yes
   tasks:
     - name: stop all docker containers

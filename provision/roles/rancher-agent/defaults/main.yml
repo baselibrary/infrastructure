@@ -2,7 +2,7 @@
 # image
 rancher_agent_name: rancher-server
 rancher_agent_image: rancher/agent
-rancher_agent_version: v1.2.2
+rancher_agent_version: v1.2.5
 # network
 rancher_agent_port: 8080
 # storage

@@ -74,7 +74,7 @@
       - /data/lib/rancher:/var/lib/rancher
       - /var/run/docker.sock:/var/run/docker.sock
     env:
-      CATTLE_HOST_LABELS="project={{ RANCHER_PROJECT_NAME }}&host.type=ci"
+      CATTLE_HOST_LABELS="project={{ RANCHER_PROJECT_NAME }}&orchestration=true&etcd=true"
     command: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/scripts/{{ rancher_token.json['token'] }}"
   become: yes
   when: inventory_hostname == groups[RANCHER_PROJECT_NAME][0]
@@ -87,7 +87,7 @@
       - /data/lib/rancher:/var/lib/rancher
       - /var/run/docker.sock:/var/run/docker.sock
     env:
-      CATTLE_HOST_LABELS="project={{ RANCHER_PROJECT_NAME }}&host.type=node"
+      CATTLE_HOST_LABELS="project={{ RANCHER_PROJECT_NAME }}&compute=true&etcd=true"
     command: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/scripts/{{ rancher_token.json['token'] }}"
   become: yes
   when: inventory_hostname != groups[RANCHER_PROJECT_NAME][0]
