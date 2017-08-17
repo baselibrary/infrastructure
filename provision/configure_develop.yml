@@ -3,4 +3,4 @@
 - hosts: "{{ RANCHER_PROJECT_NAME }}"
   gather_facts: yes
   roles:
-    - rancher-develop
+    - develop

@@ -1,0 +1,34 @@
+---
+# ansible-playbook -i provision/scaleworks provision/init_certs.yml
+- hosts: localhost
+  become: no
+  gather_facts: no
+  vars:
+    certs_name: certs
+    certs_data_dir: "{{ inventory_dir }}/files"
+    certs_key_file: "{{ certs_data_dir }}/{{ certs_name }}-key.pem"
+    certs_csr_file: "{{ certs_data_dir }}/{{ certs_name }}-csr.pem"
+    certs_cert_file: "{{ certs_data_dir }}/{{ certs_name }}-cert.pem"
+    certs_dhparam_file: "{{ certs_data_dir }}/{{ certs_name }}-dhparam.pem"
+    certs_key_length: "2048"
+    certs_dhparam_length: "2048"
+    certs_domain: "*.thoughtworks.io"
+    certs_country: "CN"
+    certs_state: "Shaanxi"
+    certs_city: "Xi‘an"
+    certs_org: "ThoughtWorks"
+    certs_subject: "/C={{ certs_country }}/ST={{ certs_state }}/L={{ certs_city }}/O={{ certs_org }}/CN={{ certs_domain }}"
+    certs_lifetime: 1825
+  tasks:
+    - name: generate rsa key
+      command: openssl genrsa -out {{ certs_key_file }} {{ certs_key_length }}
+      args:
+        creates: "{{ certs_key_file }}"
+    - name: generate csr
+      command: openssl req -new -subj {{ certs_subject }} -key {{ certs_key_file }} -out {{ certs_csr_file }}
+      args:
+       creates: "{{ certs_csr_file }}"
+    - name: generate self-signed certificate
+      command: openssl req -x509 -extensions v3_ca -days {{ certs_lifetime }} -key {{ certs_key_file }} -in {{ certs_csr_file }} -out {{ certs_cert_file }}
+      args:
+        creates: "{{ certs_cert_file }}"

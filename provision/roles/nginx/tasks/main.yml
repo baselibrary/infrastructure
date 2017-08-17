@@ -1,16 +1,19 @@
 ---
-- name: remove nginx configuration
+- name: clean nginx configuration
   file:
-    path: /etc/nginx/conf.d
+    path: /etc/nginx/conf
     state: absent
   become: yes
-
-- name: ensure nginx configuration directory
+  
+- name: ensure nginx directory
   file:
-    path: "/etc/nginx/conf.d"
+    path: "{{ item }}"
     state: directory
     owner: root
     group: root
+  with_items:
+    - /etc/nginx/ssl
+    - /etc/nginx/conf
   become: yes
 
 - name: generate nginx configuration
@@ -22,7 +25,7 @@
 - name: generate vhost configuration
   template:
     src: vhost.conf.j2
-    dest: "/etc/nginx/conf.d/{{ item.server_name.split(' ')[0] }}_{{ item.listen }}.conf"
+    dest: "/etc/nginx/conf/{{ item.server_name.split(' ')[0] }}_{{ item.listen }}.conf"
   with_items: "{{ nginx_vhosts }}"
   become: yes
 
@@ -32,7 +35,8 @@
     image: "nginx:stable"
     network_mode: host
     volumes:
-      - "/etc/nginx/conf.d:/etc/nginx/conf.d:ro"
+      - "/etc/nginx/ssl:/etc/nginx/ssl:ro"
+      - "/etc/nginx/conf:/etc/nginx/conf:ro"
       - "/etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
     restart_policy: unless-stopped
   become: yes

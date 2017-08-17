@@ -1,8 +1,15 @@
 server {
-  listen {{ item.listen | default('80') }};
+  listen {{ item.listen | default('80') }} {% if item.ssl %}ssl spdy{% endif %};
 
 {% if item.server_name is defined %}
   server_name {{ item.server_name }};
+{% endif %}
+
+{% if item.ssl_certificate is defined %}
+  ssl_certificate {{ item.ssl_certificate }};
+{% endif %}
+{% if item.ssl_certificate_key is defined %}
+  ssl_certificate_key {{ item.ssl_certificate_key }};
 {% endif %}
 
 {% if item.root is defined %}

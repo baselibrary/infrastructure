@@ -4,24 +4,66 @@
   become: false
   gather_facts: yes
   vars:
+    certs_name: certs
+    certs_data_dir: "{{ inventory_dir }}/files"
+    certs_key_file: "{{ certs_data_dir }}/{{ certs_name }}-key.pem"
+    certs_csr_file: "{{ certs_data_dir }}/{{ certs_name }}-csr.pem"
+    certs_cert_file: "{{ certs_data_dir }}/{{ certs_name }}-cert.pem"
     nginx_vhosts:
       - listen: "8080"
         server_name: "localhost"
+        ssl: false
         extra_parameters: |
           location / {
-            proxy_http_version 1.1;
-            proxy_pass http://rancher;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
             proxy_set_header Host $host;
             proxy_set_header X-Forwarded-Proto $scheme;
             proxy_set_header X-Forwarded-Port $server_port;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_pass http://rancher;
+            proxy_http_version 1.1;
+            proxy_read_timeout 900s;
+          }
+      - listen: "443"
+        server_name: "localhost"
+        ssl: true
+        ssl_certificate: /etc/nginx/ssl/localhost.pem
+        ssl_certificate_key: /etc/nginx/ssl/localhost.key
+        extra_parameters: |
+          location / {
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_pass http://rancher;
+            proxy_http_version 1.1;
+            proxy_read_timeout 900s;
           }
     nginx_upstreams:
       - name: rancher
         servers: "{% set vars = [] %}{% for host in rancher_masters_host %}{{ vars.append(hostvars[host]['ansible_host'] + ':8080') }}{% endfor %}{{ vars }}"
     mysql_data_dir: /data/lib/mysql
+  pre_tasks:
+    - name: ensure nginx ssl directory
+      file:
+        path: "/etc/nginx/ssl"
+        state: directory
+        owner: root
+        group: root
+      become: yes
+    - name: copy certs key
+      copy:
+        src: "{{ certs_key_file }}"
+        dest: "/etc/nginx/ssl/localhost.key"
+      become: true
+    - name: copy certs cert
+      copy:
+        src: "{{ certs_cert_file }}"
+        dest: "/etc/nginx/ssl/localhost.pem"
+      become: true
   roles:
     - nginx
     - mysql

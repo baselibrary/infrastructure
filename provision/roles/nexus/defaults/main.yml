@@ -2,7 +2,7 @@
 # image
 nexus_name: nexus-server
 nexus_image: sonatype/nexus3
-nexus_version: 3.2.1
+nexus_version: 3.5.0
 
 # network
 nexus_port: 8081

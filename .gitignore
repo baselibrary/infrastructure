@@ -9,6 +9,8 @@
 .vagrant
 .sass-cache
 .idea/*
+*.key
+*.pem
 *.retry
 tags
 coverage
