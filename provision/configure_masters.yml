@@ -5,6 +5,7 @@
   gather_facts: yes
   vars:
     etcd_data_dir: /data/lib/etcd
+  pre_tasks:
+    - copy: src=~/.ssh/id_rsa dest=/root/.ssh/id_rsa owner=root group=root mode=0600
   roles:
-    - etcd
     - rancher

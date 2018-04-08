@@ -1,5 +1,5 @@
 server {
-  listen {{ item.listen | default('80') }} {% if item.ssl %}ssl spdy{% endif %};
+  listen {{ item.listen | default('80') }} {% if item.ssl %}ssl{% endif %};
 
 {% if item.server_name is defined %}
   server_name {{ item.server_name }};

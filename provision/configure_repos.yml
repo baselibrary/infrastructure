@@ -3,6 +3,7 @@
 - hosts: repository
   gather_facts: yes
   vars:
+    certs_data_dir: "{{ inventory_dir }}/files"
     gogs_web_port: 3000
     gogs_ssh_port: 10022
     gogs_data_dir: /data/lib/gogs
@@ -19,6 +20,33 @@
     nginx_vhosts:
       - listen: "80"
         server_name: "repo.thoughtworks.io"
+        ssl: false
+        extra_parameters: |
+          location / {
+            proxy_pass http://repo;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          }
+      - listen: "443"
+        server_name: "thoughtworks.io"
+        ssl: true
+        ssl_certificate: /etc/nginx/ssl/thoughtworks.pem
+        ssl_certificate_key: /etc/nginx/ssl/thoughtworks.key
+        extra_parameters: |
+          location / {
+            proxy_pass http://registry;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          }
+      - listen: "443"
+        server_name: "repo.thoughtworks.io"
+        ssl: true
+        ssl_certificate: /etc/nginx/ssl/thoughtworks.pem
+        ssl_certificate_key: /etc/nginx/ssl/thoughtworks.key
         extra_parameters: |
           location / {
             proxy_pass http://repo;
@@ -29,6 +57,7 @@
           }
       - listen: "80"
         server_name: "git.thoughtworks.io"
+        ssl: false
         extra_parameters: |
           location / {
             proxy_pass http://git;
@@ -41,9 +70,28 @@
       - name: repo
         servers:
           - "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:{{ nexus_port }}"
+      - name: registry
+        servers:
+          - "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000"
       - name: git
         servers:
-          - "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:{{ gogs_web_port }}"        
+          - "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:{{ gogs_web_port }}"
+  pre_tasks:
+    - name: ensure nginx ssl directory
+      file:
+        path: "/etc/nginx/ssl"
+        state: directory
+        owner: root
+        group: root
+      become: yes
+    - name: copy certs
+      copy:
+        src: "{{ certs_data_dir }}/{{ item }}"
+        dest: "/etc/nginx/ssl/{{ item }}"
+      with_items:
+        - thoughtworks.key
+        - thoughtworks.pem
+      become: true
   roles:
     - gogs
     - nexus

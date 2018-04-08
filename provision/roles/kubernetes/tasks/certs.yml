@@ -1,0 +1,172 @@
+- name: create kubernetes config directory
+  file:
+    path: "/etc/kubernetes"
+    state: directory
+    owner: root
+    group: root
+  become: yes
+
+- name: create kubernetes certs directory
+  file:
+    path: "/etc/kubernetes/pki"
+    state: directory
+    owner: root
+    group: root
+  become: yes
+
+- name: create kubernetes script directory
+  file:
+    path: "/etc/kubernetes/manifests"
+    state: directory
+    owner: root
+    group: root
+  become: yes
+
+- name: create root ca key
+  command: openssl genrsa -out {{ inventory_dir }}/files/ca.key 2048 creates="{{ inventory_dir }}/files/ca.key"
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create root ca certificate
+  command: openssl req -x509 -new -nodes -subj "/CN=kubernetes" -days 3650 -key {{ inventory_dir }}/files/ca.key -out {{ inventory_dir }}/files/ca.crt creates="{{ inventory_dir }}/files/ca.crt"
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- set_fact:
+    apiserver_opnssl: "{{ lookup('template', 'ssl/apiserver.cnf') }}"
+
+- name: create apiserver key
+  shell: |
+    openssl genrsa -out {{ inventory_dir }}/files/apiserver.key 2048
+  args:
+    creates: "{{ inventory_dir }}/files/apiserver.key"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create apiserver csr
+  shell: |
+    openssl req -new -subj "/CN=kube-apiserver" -key {{ inventory_dir }}/files/apiserver.key -out {{ inventory_dir }}/files/apiserver.csr -config <(echo "{{ apiserver_opnssl }}")
+  args:
+    creates: "{{ inventory_dir }}/files/apiserver.csr"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create apiserver cert
+  shell: |
+    openssl x509 -req -CAcreateserial -CAkey {{ inventory_dir }}/files/ca.key -CA {{ inventory_dir }}/files/ca.crt -in {{ inventory_dir }}/files/apiserver.csr -out {{ inventory_dir }}/files/apiserver.crt -days 10000 -extensions v3_req -extfile <(echo "{{ apiserver_opnssl }}")
+  args:
+    creates: "{{ inventory_dir }}/files/apiserver.crt"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- set_fact:
+    kube_openssl_config: "{{ lookup('template', 'ssl/apiserver-kubelet-client.cnf') }}"
+
+- name: create kubelet client key
+  shell: |
+    openssl genrsa -out {{ inventory_dir }}/files/apiserver-kubelet-client.key 2048
+  args:
+    creates: "{{ inventory_dir }}/files/apiserver-kubelet-client.key"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create kubelet client csr
+  shell: |
+    openssl req -new -subj "/O=system:masters/CN=kube-apiserver-kubelet-client" -key {{ inventory_dir }}/files/apiserver-kubelet-client.key -out {{ inventory_dir }}/files/apiserver-kubelet-client.csr -config <(echo "{{ kube_openssl_config }}")
+  args:
+    creates: "{{ inventory_dir }}/files/apiserver-kubelet-client.csr"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create kubelet client cert
+  shell: |
+    openssl x509 -req -CAcreateserial -CAkey {{ inventory_dir }}/files/ca.key -CA {{ inventory_dir }}/files/ca.crt -in {{ inventory_dir }}/files/apiserver-kubelet-client.csr -out {{ inventory_dir }}/files/apiserver-kubelet-client.crt -days 10000 -extensions v3_req -extfile <(echo "{{ kube_openssl_config }}")
+  args:
+    creates: "{{ inventory_dir }}/files/apiserver-kubelet-client.crt"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+
+
+
+
+
+- set_fact:
+    kube_openssl_config: "{{ lookup('template', 'ssl/front-proxy-ca.cnf') }}"
+
+- name: create front-proxy-ca key
+  shell: |
+    openssl genrsa -out {{ inventory_dir }}/files/front-proxy-ca.key 2048
+  args:
+    creates: "{{ inventory_dir }}/files/front-proxy-ca.key"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create front-proxy-ca csr
+  shell: |
+    openssl req -new -subj "/CN=kubernetes" -key {{ inventory_dir }}/files/front-proxy-ca.key -out {{ inventory_dir }}/files/front-proxy-ca.csr -config <(echo "{{ kube_openssl_config }}")
+  args:
+    creates: "{{ inventory_dir }}/files/front-proxy-ca.csr"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create front-proxy-ca cert
+  shell: |
+    openssl x509 -req -CAcreateserial -CAkey {{ inventory_dir }}/files/ca.key -CA {{ inventory_dir }}/files/ca.crt -in {{ inventory_dir }}/files/front-proxy-ca.csr -out {{ inventory_dir }}/files/front-proxy-ca.crt -days 10000 -extensions v3_req -extfile <(echo "{{ kube_openssl_config }}")
+  args:
+    creates: "{{ inventory_dir }}/files/front-proxy-ca.crt"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- set_fact:
+    kube_openssl_config: "{{ lookup('template', 'ssl/front-proxy-client.cnf') }}"
+
+- name: create front-proxy-client key
+  shell: |
+    openssl genrsa -out {{ inventory_dir }}/files/front-proxy-client.key 2048
+  args:
+    creates: "{{ inventory_dir }}/files/front-proxy-client.key"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create front-proxy-client csr
+  shell: |
+    openssl req -new -subj "/CN=front-proxy-client" -key {{ inventory_dir }}/files/front-proxy-client.key -out {{ inventory_dir }}/files/front-proxy-client.csr -config <(echo "{{ kube_openssl_config }}")
+  args:
+    creates: "{{ inventory_dir }}/files/front-proxy-client.csr"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: create front-proxy-client cert
+  shell: |
+    openssl x509 -req -CAcreateserial -CAkey {{ inventory_dir }}/files/ca.key -CA {{ inventory_dir }}/files/ca.crt -in {{ inventory_dir }}/files/front-proxy-client.csr -out {{ inventory_dir }}/files/front-proxy-client.crt -days 10000 -extensions v3_req -extfile <(echo "{{ kube_openssl_config }}")
+  args:
+    creates: "{{ inventory_dir }}/files/front-proxy-client.crt"
+    executable: /bin/bash
+  become: no
+  run_once: yes
+  delegate_to: localhost

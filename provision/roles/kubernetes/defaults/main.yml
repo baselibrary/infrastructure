@@ -1,0 +1,5 @@
+---
+kube_certs_ca_subject: "/CN=kubernetes"
+
+
+kube_token: 

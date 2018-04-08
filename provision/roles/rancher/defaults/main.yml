@@ -2,7 +2,7 @@
 # image
 rancher_name: rancher-server
 rancher_image: rancher/server
-rancher_version: v1.6.7
+rancher_version: v1.6.14
 # network
 rancher_port: 8080
 # storage
@@ -12,7 +12,7 @@ rancher_catalogs:
   catalogs:
     library:
       url: https://git.rancher.io/rancher-catalog.git
-      branch: master
+      branch: v1.6-release
     community:
       url: https://git.rancher.io/community-catalog.git
       branch: master

@@ -11,6 +11,10 @@
   retries: 5
   delay: 30
 
+- debug: msg="{{ RANCHER_APIKEY_PUBLIC }}"
+
+- debug: msg="{{ RANCHER_APIKEY_SECRET }}"
+
 - name: config apikey
   uri:
     method: POST
@@ -55,16 +59,16 @@
   when: rancher_auth.status == 200
   delay: 10
 
-- name: config catalogs
-  uri:
-      method: PUT
-      url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/settings/catalog.url"
-      user:     "{{ RANCHER_APIKEY_PUBLIC }}"
-      password: "{{ RANCHER_APIKEY_SECRET }}"
-      body: "{{ rancher_catalogs_body | to_json }}"
-      body_format: json
-      status_code: 200
-  become: no
-  run_once: yes
-  delegate_to: localhost
-  delay: 10
+#- name: config catalogs
+#  uri:
+#      method: PUT
+#      url: "http://{{ RANCHER_MASTER_HOST }}:{{ RANCHER_MASTER_PORT }}/v1/settings/catalog.url"
+#      user:     "{{ RANCHER_APIKEY_PUBLIC }}"
+#      password: "{{ RANCHER_APIKEY_SECRET }}"
+#      body: "{{ rancher_catalogs_body | to_json }}"
+#      body_format: json
+#      status_code: 200
+#  become: no
+#  run_once: yes
+#  delegate_to: localhost
+#  delay: 10

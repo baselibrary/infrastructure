@@ -4,7 +4,7 @@
     path: /etc/nginx/conf
     state: absent
   become: yes
-  
+
 - name: ensure nginx directory
   file:
     path: "{{ item }}"
@@ -32,7 +32,7 @@
 - name: start nginx container
   docker_container:
     name: "nginx"
-    image: "nginx:stable"
+    image: "nginx"
     network_mode: host
     volumes:
       - "/etc/nginx/ssl:/etc/nginx/ssl:ro"

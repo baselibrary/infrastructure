@@ -11,6 +11,7 @@
 .idea/*
 *.key
 *.pem
+*.crt
 *.retry
 tags
 coverage

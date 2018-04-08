@@ -4,11 +4,7 @@
   become: false
   gather_facts: yes
   vars:
-    certs_name: certs
     certs_data_dir: "{{ inventory_dir }}/files"
-    certs_key_file: "{{ certs_data_dir }}/{{ certs_name }}-key.pem"
-    certs_csr_file: "{{ certs_data_dir }}/{{ certs_name }}-csr.pem"
-    certs_cert_file: "{{ certs_data_dir }}/{{ certs_name }}-cert.pem"
     nginx_vhosts:
       - listen: "8080"
         server_name: "localhost"
@@ -28,8 +24,8 @@
       - listen: "443"
         server_name: "localhost"
         ssl: true
-        ssl_certificate: /etc/nginx/ssl/localhost.pem
-        ssl_certificate_key: /etc/nginx/ssl/localhost.key
+        ssl_certificate: /etc/nginx/ssl/thoughtworks.pem
+        ssl_certificate_key: /etc/nginx/ssl/thoughtworks.key
         extra_parameters: |
           location / {
             proxy_set_header Host $host;
@@ -54,16 +50,15 @@
         owner: root
         group: root
       become: yes
-    - name: copy certs key
+    - name: copy certs
       copy:
-        src: "{{ certs_key_file }}"
-        dest: "/etc/nginx/ssl/localhost.key"
-      become: true
-    - name: copy certs cert
-      copy:
-        src: "{{ certs_cert_file }}"
-        dest: "/etc/nginx/ssl/localhost.pem"
+        src: "{{ certs_data_dir }}/{{ item }}"
+        dest: "/etc/nginx/ssl/{{ item }}"
+      with_items:
+        - thoughtworks.key
+        - thoughtworks.pem
       become: true
   roles:
     - nginx
+    - kubernetes-balancing
     - mysql

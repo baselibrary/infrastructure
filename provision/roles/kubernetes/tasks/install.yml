@@ -1,0 +1,205 @@
+---
+- name: add kubernetes apt key
+  apt_key:
+    id: A7317B0F
+    keyserver: keyserver.ubuntu.com
+    state: present
+  become: yes
+
+- name: add kubernetes apt repository
+  apt_repository:
+    repo: "deb http://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
+    filename: "kubernetes"
+    state: present
+  become: yes
+
+- name: install kubernetes package
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - kubeadm
+    - kubelet
+    - kubernetes-cni
+  become: yes
+
+- name: ensure kubernetes directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+  with_items:
+    - /root/.kube
+    - /etc/kubernetes
+  become: yes
+
+- name: generate kubernetes token
+  command: /usr/bin/kubeadm token generate
+  register: kube_token
+
+- name: generate kubernetes init
+  template:
+    src: kube-init.yml
+    dest: /etc/kubernetes/kube-init.yml
+  become: yes
+
+- name: generate kubernetes configuration
+  command: kubeadm init --config=/etc/kubernetes/kube-init.yml
+  args:
+    creates: "/etc/kubernetes/admin.conf"
+  become: yes
+  run_once: yes
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: distribution kubernetes configuration
+  synchronize:
+    src: "/etc/kubernetes/pki"
+    dest: /etc/kubernetes
+    delete: yes
+    recursive: yes
+  become: yes
+  when: inventory_hostname in groups['masters'] and inventory_hostname != groups['masters'][0]
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: install kubernetes
+  command: kubeadm init --config=/etc/kubernetes/kube-init.yml
+  args:
+    creates: "/etc/kubernetes/admin.conf"
+  become: yes
+
+- name: create kubeconfig
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    remote_src: true
+    owner: root
+    group: root
+    mode: 0755
+  become: yes
+
+- name: install kubernetes network
+  command: /usr/bin/kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml
+  args:
+    creates: "/etc/cni/net.d/10-kuberouter.conf"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: config kubernetes dns
+  command: kubectl scale --replicas=3 -n kube-system deployment/kube-dns
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: check kubernetes dashboard
+  shell: "kubectl get pods --all-namespaces=true | grep kubernetes-dashboard"
+  register: check_dashboard
+  ignore_errors: true
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: install kubernetes dashboard
+  command: /usr/bin/kubectl create -f https://git.io/kube-dashboard
+  when: check_dashboard|failed
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: scale kubernetes dashboard
+  command: kubectl scale --replicas=3 -n kube-system deployment/kubernetes-dashboard
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+
+
+
+
+
+
+- name: check kubernetes monitoring
+  shell: "kubectl get pods --all-namespaces=true | grep heapster"
+  register: check_monitoring
+  ignore_errors: true
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: install kubernetes monitoring
+  command: /usr/bin/kubectl create -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
+  when: check_monitoring|failed
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: scale kubernetes monitoring
+  command: kubectl scale --replicas=3 -n kube-system deployment/heapster
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+
+- name: check kubernetes influxdb
+  shell: "kubectl get pods --all-namespaces=true | grep monitoring-influxdb"
+  register: check_influxdb
+  ignore_errors: true
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: install kubernetes influxdb
+  command: /usr/bin/kubectl create -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
+  when: check_influxdb|failed
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: scale kubernetes influxdb
+  command: kubectl scale --replicas=3 -n kube-system deployment/monitoring-influxdb
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+
+- name: check kubernetes grafana
+  shell: "kubectl get pods --all-namespaces=true | grep monitoring-grafana"
+  register: check_grafana
+  ignore_errors: true
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: install kubernetes grafana
+  command: /usr/bin/kubectl create -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/grafana.yaml
+  when: check_grafana|failed
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"
+
+- name: scale kubernetes grafana
+  command: kubectl scale --replicas=3 -n kube-system deployment/monitoring-grafana
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: yes
+  run_once: true
+  delegate_to: "{{ groups.masters | first }}"

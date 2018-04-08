@@ -1,8 +1,8 @@
 ---
 # image
 nexus_name: nexus-server
-nexus_image: sonatype/nexus3
-nexus_version: 3.5.0
+nexus_image: baselibrary/nexus
+nexus_version: 3.6
 
 # network
 nexus_port: 8081
@@ -65,6 +65,10 @@ nexus_repositories:
     type: maven2
     recipe: proxy
     remote_url: 'https://jcenter.bintray.com/'
+  - name: maven-clojars
+    type: maven2
+    recipe: proxy
+    remote_url: 'http://clojars.org/repo/'
   - name: maven-public
     type: maven2
     recipe: group
@@ -72,11 +76,12 @@ nexus_repositories:
       - maven-releases
       - maven-snapshot
       - maven-central
+      - maven-clojars
   - name: docker-releases
     type: docker
     recipe: hosted
     http_port: 5001
-    write_policy: allow_once
+    write_policy: allow
     version_policy: release
   - name: docker-snapshot
     type: docker

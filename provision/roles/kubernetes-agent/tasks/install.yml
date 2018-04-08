@@ -1,0 +1,33 @@
+---
+- name: add kubernetes apt key
+  apt_key:
+    id: A7317B0F
+    keyserver: keyserver.ubuntu.com
+    state: present
+  become: yes
+
+- name: add kubernetes apt repository
+  apt_repository:
+    repo: "deb http://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
+    filename: "kubernetes"
+    state: present
+  become: yes
+
+- name: install kubernetes package
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - keepalived
+    - kubeadm
+    - kubelet
+    - kubernetes-cni
+  become: yes
+
+- name: join kubernetes agent
+  shell: |
+    kubeadm join --token=0fa86a.87b5dc45a3f42032 10.202.128.107:6443
+  args:
+    creates: "/etc/kubernetes/pki/ca.crt"
+    executable: /bin/bash
+  become: yes

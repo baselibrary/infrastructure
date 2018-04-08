@@ -1,0 +1,23 @@
+apiVersion: kubeadm.k8s.io/v1alpha1
+kind: MasterConfiguration
+kubernetesVersion: v1.7.5
+token: 0fa86a.87b5dc45a3f42032
+api:
+  advertiseAddress: 10.202.128.107
+  bindPort: 6443
+apiServerCertSANs:
+  - toc-master01
+  - toc-master02
+  - toc-master03
+  - 10.202.128.107
+  - 10.202.128.109
+  - 10.202.128.110
+  - 10.202.128.111
+networking:
+    podSubnet: 192.168.0.0/16
+    serviceSubnet: 10.96.0.0/12
+etcd:
+  endpoints:
+  - http://10.202.128.109:2379
+  - http://10.202.128.110:2379
+  - http://10.202.128.111:2379

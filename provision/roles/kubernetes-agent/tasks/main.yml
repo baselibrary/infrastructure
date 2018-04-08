@@ -1,0 +1,13 @@
+---
+- include: install.yml
+  tags:
+    - development
+    - rancher
+    - install
+
+- include: config.yml
+  tags:
+    - development
+    - rancher
+    - config
+

@@ -1,0 +1,25 @@
+---
+- name: ensure rancher-balancing directory
+  file:
+    path: /etc/rancher
+    state: directory
+    owner: root
+    group: root
+  become: yes
+
+- name: generate rancher-balancing proxy
+  template:
+    src: rancher-balancing.cfg
+    dest: /etc/rancher/rancher-balancing.cfg
+  become: yes
+
+- name: start rancher-balancing container
+  docker_container:
+    name: "kube-balancing"
+    image: "haproxy"
+    ports:
+      - "6443:6443"
+    volumes:
+        - "/etc/kubernetes/kube-balancing.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+    restart_policy: unless-stopped
+  become: yes
