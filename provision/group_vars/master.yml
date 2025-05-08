@@ -3,6 +3,6 @@
 docker_opts: ""
 docker_registries:
   - host: "https://index.docker.io/v1/"
-    auth: "Zmx5MndpbmQ6cHdjNTAycg=="
-    email: "fly2wind@gmail.com"
+    auth: "Zmx5MndmmbmQ6cHdjNTAycg=="
+    email: "fly2wind@xxxxx.com"
 docker_rpmpackage: no
