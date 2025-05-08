@@ -3,9 +3,9 @@
 docker_opts: "--registry-mirror=http://master-1:5000 --insecure-registry=master-1:5000"
 docker_registries:
   - host: "https://index.docker.io/v1/"
-    auth: "Zmx5MndpbmQ6cHdjNTAycg=="
-    email: "fly2wind@gmail.com"
+    auth: "xxxxxx=="
+    email: "xxx@xxx.com"
   - host: "http://master-1:5000"
-    auth: "Zmx5MndpbmQ6cHdjNTAycg=="
-    email: "fly2wind@gmail.com"
+    auth: "xxxxxxxxx=="
+    email: "xxx@xxx.com"
 docker_rpmpackage: no
